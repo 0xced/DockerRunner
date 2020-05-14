@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup>
+    <!-- To avoid getting this error on AppVeyor: /usr/share/dotnet/sdk/3.1.201/Roslyn/Microsoft.Managed.Core.targets(104,5): error : SourceRoot items must include at least one top-level (not nested) item when DeterministicSourcePaths is true
+         See https://github.com/dotnet/roslyn/issues/37379 -->
+    <SourceRoot Include="$(MSBuildThisFileDirectory)/"/>
+  </ItemGroup>
+</Project>
