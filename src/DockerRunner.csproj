@@ -7,6 +7,28 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Label="Publishing">
+    <Authors>Cédric Luthi</Authors>
+    <Copyright>Copyright © Cédric Luthi</Copyright>
+    <Description>Manage docker containers lifecycle</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/0xced/DockerRunner</PackageProjectUrl>
+    <PackageTags>Docker Container</PackageTags>
+    <RepositoryUrl>https://github.com/0xced/DockerRunner</RepositoryUrl>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../images/icon.png">
+      <Pack>True</Pack>
+      <PackagePath />
+    </None>
+  </ItemGroup>
+
   <PropertyGroup Label="MinVer">
     <MinVerMinimumMajorMinor>0.9</MinVerMinimumMajorMinor>
   </PropertyGroup>
