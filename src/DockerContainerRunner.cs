@@ -10,10 +10,7 @@ using System.Threading.Tasks;
 namespace DockerRunner
 {
     /// <inheritdoc cref="DockerRunner.IDockerContainerRunner"/>
-    public class DockerContainerRunner : IDockerContainerRunner
-#if !NETSTANDARD2_0
-    , IAsyncDisposable
-#endif
+    public class DockerContainerRunner : IDockerContainerRunner, IAsyncDisposable
     {
         private IDockerContainerConfiguration _configuration = null!;
         private EventHandler<CommandEventArgs>? _runningCommand;
@@ -39,8 +36,8 @@ namespace DockerRunner
         /// <param name="runningCommand">An optional event handler raised when a command is running.</param>
         /// <param name="ranCommand">An optional event handler raised when a command has successfully finished running.</param>
         /// <param name="waitOnDispose">
-        /// If <c>true</c>, wait for the container to be fully stopped in <see cref="DisposeAsync"/>.
-        /// Using <c>false</c> is faster but no error will be reported if the stopping the container fails.
+        /// If <c>true</c>, waits for the container to be fully stopped when the runner is disposed, in <see cref="DisposeAsync"/>.
+        /// Using <c>false</c> is faster but no error will be reported if stopping the container fails.
         /// </param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that can be used to abort the start operation. Note that the container may actually continue to start.</param>
         /// <returns>The container runner that can be used to stop the container.</returns>

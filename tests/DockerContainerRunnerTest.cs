@@ -25,12 +25,7 @@ namespace DockerRunner.Tests
         {
             var testsDirectory = GetTestsDirectory();
             var configuration = new NginxDockerContainerConfiguration(testsDirectory);
-#if NETCOREAPP2_1
-            var runner = await DockerContainerRunner.StartDockerContainerRunnerAsync(configuration, RunningCommand, RanCommand);
-            await runner.DisposeAsync();
-#else
             await using var runner = await DockerContainerRunner.StartDockerContainerRunnerAsync(configuration, RunningCommand, RanCommand);
-#endif
             var containerInfo = runner.ContainerInfo;
             var httpClient = new HttpClient();
             var host = containerInfo.Host;
