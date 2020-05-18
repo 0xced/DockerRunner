@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace DockerRunner
 {
     /// <summary>
-    /// Configures a docker container
+    /// Configures a docker container.
     /// </summary>
     public interface IDockerContainerConfiguration
     {
