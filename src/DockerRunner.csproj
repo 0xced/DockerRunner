@@ -20,7 +20,6 @@
     <PackageProjectUrl>https://github.com/0xced/DockerRunner</PackageProjectUrl>
     <PackageTags>Docker Container</PackageTags>
     <RepositoryUrl>https://github.com/0xced/DockerRunner</RepositoryUrl>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <PropertyGroup Label="MinVer">
