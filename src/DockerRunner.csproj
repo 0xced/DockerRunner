@@ -23,16 +23,16 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
+  <PropertyGroup Label="MinVer">
+    <MinVerMinimumMajorMinor>0.9</MinVerMinimumMajorMinor>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="../images/icon.png">
       <Pack>True</Pack>
       <PackagePath />
     </None>
   </ItemGroup>
-
-  <PropertyGroup Label="MinVer">
-    <MinVerMinimumMajorMinor>0.9</MinVerMinimumMajorMinor>
-  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" Condition="$(TargetFramework) == 'netstandard2.0'" />
