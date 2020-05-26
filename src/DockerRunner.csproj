@@ -13,7 +13,6 @@
     <Copyright>Copyright © Cédric Luthi</Copyright>
     <Description>Manage docker containers lifecycle</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <IncludeSymbols>true</IncludeSymbols>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
