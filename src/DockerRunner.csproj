@@ -25,6 +25,16 @@
     <MinVerMinimumMajorMinor>0.9</MinVerMinimumMajorMinor>
   </PropertyGroup>
 
+  <!-- The generated assembly attributes + assembly info files are not embedded even when EmbedUntrackedSources is true
+       See https://github.com/dotnet/sourcelink/issues/572
+       See also https://github.com/dotnet/sdk/issues/10614#issuecomment-634029130 to learn exactly when this workaround can be removed -->
+  <PropertyGroup Label="Workaround">
+    <TargetFrameworkMonikerAssemblyAttributesPath>$([System.IO.Path]::Combine('$(IntermediateOutputPath)','$(TargetFrameworkMoniker).AssemblyAttributes$(DefaultLanguageSourceExtension)'))</TargetFrameworkMonikerAssemblyAttributesPath>
+  </PropertyGroup>
+  <ItemGroup Label="Workaround">
+    <EmbeddedFiles Include="$(GeneratedAssemblyInfoFile)"/>
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="../images/icon.png">
       <Pack>True</Pack>
