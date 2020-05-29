@@ -2,19 +2,24 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Compilation">
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <EmbedAllSources>true</EmbedAllSources>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Packaging">
     <DebugType>embedded</DebugType>
+    <EmbedAllSources>true</EmbedAllSources>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Label="Publishing">
     <Authors>Cédric Luthi</Authors>
     <Copyright>Copyright © Cédric Luthi</Copyright>
     <Description>Manage docker containers lifecycle</Description>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NeutralLanguage>en</NeutralLanguage>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/0xced/DockerRunner</PackageProjectUrl>
