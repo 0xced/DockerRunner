@@ -29,7 +29,7 @@ namespace DockerRunner.Tests
             var containerInfo = runner.ContainerInfo;
             var httpClient = new HttpClient();
             var host = containerInfo.Host;
-            var port = containerInfo.PortMappings.Single(e => e.ContainerPort == 80).HostPort;
+            var port = containerInfo.PortMappings.First(e => e.ContainerPort == 80).HostPort;
             var result = await httpClient.GetAsync($"http://{host}:{port}/DockerContainerRunnerTest.cs");
             result.StatusCode.Should().Be(HttpStatusCode.OK);
             var thisFileFromNginx = await result.Content.ReadAsStringAsync();
@@ -47,6 +47,7 @@ namespace DockerRunner.Tests
 
         private void RunningCommand(object? sender, CommandEventArgs args)
             => _testOutputHelper.WriteLine($"> {args.Command} {args.Arguments}");
+
         private void RanCommand(object? sender, RanCommandEventArgs args)
             => _testOutputHelper.WriteLine($">> {args.Command} {args.Arguments}{Environment.NewLine}{args.Output.TrimEnd('\n')}");
     }

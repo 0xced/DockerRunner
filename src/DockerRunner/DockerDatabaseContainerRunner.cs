@@ -74,7 +74,7 @@ namespace DockerRunner
         /// </summary>
         public string ConnectionString { get; }
 
-        private static ushort GetHostPort(IReadOnlyList<PortMapping> portMappings, DockerDatabaseContainerConfiguration configuration)
+        private static ushort GetHostPort(IReadOnlyCollection<PortMapping> portMappings, DockerDatabaseContainerConfiguration configuration)
         {
             var containerPort = configuration.Port;
             switch (portMappings.Count)
@@ -83,7 +83,7 @@ namespace DockerRunner
                     throw new InvalidOperationException("The docker container does not expose any port.");
                 case 1:
                 {
-                    var portMapping = portMappings[0];
+                    var portMapping = portMappings.Single();
                     if (containerPort.HasValue && containerPort.Value != portMapping.ContainerPort)
                     {
                         throw new InvalidOperationException($"The port defined in the configuration ({containerPort}) does not match the port exposed by the docker container ({portMapping.ContainerPort}). Either change the port to null for automatic detection or to {portMapping.ContainerPort}.");

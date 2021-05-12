@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -160,7 +162,7 @@ namespace DockerRunner
             string portLine;
             while ((portLine = await reader.ReadLineAsync()) != null)
             {
-                var match = Regex.Match(portLine, @"(?<containerPort>\d+)/.* -> 0\.0\.0\.0:(?<hostPort>\d+)");
+                var match = Regex.Match(portLine, @"(?<containerPort>\d+)/.* -> (?<ipAddress>.*):(?<hostPort>\d+)");
                 var containerPort = match.Groups["containerPort"];
                 var hostPort = match.Groups["hostPort"];
                 if (!(containerPort.Success && hostPort.Success))
@@ -176,10 +178,13 @@ namespace DockerRunner
                         logs = "";
                     }
                     var message = string.IsNullOrWhiteSpace(logs) ? "Please check its logs." : "Here are its logs: " + Environment.NewLine + logs;
-                    throw new DockerException($"The container {containerId} failed to start properly. {message}");
+                    throw new DockerException($"Failed to retrieve the port mapping for container {containerId}. Maybe the container failed to start properly? {message}");
                 }
 
-                ports.Add(new PortMapping(hostPort: ushort.Parse(hostPort.Value), containerPort: ushort.Parse(containerPort.Value)));
+                var ipAddress = match.Groups["ipAddress"];
+                var addressFamily = ipAddress.Success && IPAddress.TryParse(ipAddress.Value, out var address) ? address.AddressFamily : AddressFamily.Unknown;
+
+                ports.Add(new PortMapping(hostPort: ushort.Parse(hostPort.Value), containerPort: ushort.Parse(containerPort.Value), addressFamily));
             }
             return ports;
         }
