@@ -28,7 +28,7 @@ namespace DockerRunner
         public ContainerInfo ContainerInfo { get; private set; } = null!;
 
         /// <summary>
-        /// Use <see cref="StartDockerContainerRunnerAsync"/> to create a <see cref="DockerContainerRunner"/>.
+        /// Use <see cref="StartAsync"/> to create a <see cref="DockerContainerRunner"/>.
         /// </summary>
         private DockerContainerRunner(
             DockerContainerConfiguration configuration,
@@ -54,7 +54,7 @@ namespace DockerRunner
         /// </param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that can be used to abort the start operation. Note that the container may actually continue to start.</param>
         /// <returns>The container runner that can be used to stop the container.</returns>
-        public static async Task<DockerContainerRunner> StartDockerContainerRunnerAsync(
+        public static async Task<DockerContainerRunner> StartAsync(
             DockerContainerConfiguration configuration,
             EventHandler<CommandEventArgs>? runningCommand = null,
             EventHandler<RanCommandEventArgs>? ranCommand = null,

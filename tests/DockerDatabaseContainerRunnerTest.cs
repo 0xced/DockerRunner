@@ -17,7 +17,7 @@ namespace DockerRunner.Tests
         public async Task RunPostgres(Type configurationType)
         {
             var configuration = (DockerDatabaseContainerConfiguration)(Activator.CreateInstance(configurationType) ?? throw new InvalidOperationException($"Activator.CreateInstance({configurationType}) returned null."));
-            await using var runner = await DockerDatabaseContainerRunner.StartDockerDatabaseContainerRunnerAsync(configuration, RunningCommand, RanCommand);
+            await using var runner = await DockerDatabaseContainerRunner.StartAsync(configuration, RunningCommand, RanCommand);
 
             runner.ContainerInfo.ContainerId.Should().NotBeNull();
             runner.ContainerInfo.PortMappings.Should().NotBeEmpty();

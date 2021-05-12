@@ -19,7 +19,7 @@ namespace DockerRunner.Tests
         public async Task ReadFileFromNginx()
         {
             var configuration = new NginxDockerContainerConfiguration(TestsDirectory);
-            await using var runner = await DockerContainerRunner.StartDockerContainerRunnerAsync(configuration, RunningCommand, RanCommand);
+            await using var runner = await DockerContainerRunner.StartAsync(configuration, RunningCommand, RanCommand);
             var containerInfo = runner.ContainerInfo;
             var httpClient = new HttpClient();
             var endpoints = containerInfo.PortMappings.Where(e => e.ContainerPort == 80).Select(e => e.HostEndpoint).ToList();

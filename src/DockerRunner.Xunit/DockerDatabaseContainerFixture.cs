@@ -30,7 +30,7 @@ namespace DockerRunner.Xunit
 
         async Task IAsyncLifetime.InitializeAsync()
         {
-            _runner = await DockerDatabaseContainerRunner.StartDockerDatabaseContainerRunnerAsync(Configuration, RunningCommand, RanCommand);
+            _runner = await DockerDatabaseContainerRunner.StartAsync(Configuration, RunningCommand, RanCommand);
         }
 
         /// <inheritdoc />

@@ -26,7 +26,7 @@ namespace DockerRunner
         public string ConnectionString { get; }
 
         /// <summary>
-        /// Use <see cref="StartDockerDatabaseContainerRunnerAsync"/> to create a <see cref="DockerDatabaseContainerRunner"/>.
+        /// Use <see cref="StartAsync"/> to create a <see cref="DockerDatabaseContainerRunner"/>.
         /// </summary>
         private DockerDatabaseContainerRunner(DockerContainerRunner runner, string connectionString)
         {
@@ -50,14 +50,14 @@ namespace DockerRunner
         /// If a connection to the database can not be established within the time allowed by the <paramref name="configuration"/> timeout.
         /// The inner exception of the timeout exception contains the database exception that occurred when trying to connect to the database.
         /// </exception>
-        public static async Task<DockerDatabaseContainerRunner> StartDockerDatabaseContainerRunnerAsync(
+        public static async Task<DockerDatabaseContainerRunner> StartAsync(
             DockerDatabaseContainerConfiguration configuration,
             EventHandler<CommandEventArgs>? runningCommand = null,
             EventHandler<RanCommandEventArgs>? ranCommand = null,
             bool waitOnDispose = false,
             CancellationToken cancellationToken = default)
         {
-            var runner = await DockerContainerRunner.StartDockerContainerRunnerAsync(configuration, runningCommand, ranCommand, waitOnDispose, cancellationToken);
+            var runner = await DockerContainerRunner.StartAsync(configuration, runningCommand, ranCommand, waitOnDispose, cancellationToken);
             var containerInfo = runner.ContainerInfo;
             var hostEndpoint = GetHostEndpoint(containerInfo.PortMappings, configuration);
             var connectionString = configuration.ConnectionString(hostEndpoint.Address.ToString(), (ushort)hostEndpoint.Port);
