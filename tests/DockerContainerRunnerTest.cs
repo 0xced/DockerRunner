@@ -1,9 +1,7 @@
-using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -11,44 +9,30 @@ using Xunit.Abstractions;
 
 namespace DockerRunner.Tests
 {
-    public class DockerContainerRunnerTest
+    public class DockerContainerRunnerTest : TestBase
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-
-        public DockerContainerRunnerTest(ITestOutputHelper testOutputHelper)
+        public DockerContainerRunnerTest(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
         {
-            _testOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
         }
 
         [Fact]
         public async Task ReadFileFromNginx()
         {
-            var testsDirectory = GetTestsDirectory();
-            var configuration = new NginxDockerContainerConfiguration(testsDirectory);
+            var configuration = new NginxDockerContainerConfiguration(TestsDirectory);
             await using var runner = await DockerContainerRunner.StartDockerContainerRunnerAsync(configuration, RunningCommand, RanCommand);
             var containerInfo = runner.ContainerInfo;
             var httpClient = new HttpClient();
-            var host = containerInfo.Host;
-            var port = containerInfo.PortMappings.First(e => e.ContainerPort == 80).HostPort;
-            var result = await httpClient.GetAsync($"http://{host}:{port}/DockerContainerRunnerTest.cs");
-            result.StatusCode.Should().Be(HttpStatusCode.OK);
-            var thisFileFromNginx = await result.Content.ReadAsStringAsync();
-            var thisFileFromDisk = await File.ReadAllTextAsync(Path.Combine(testsDirectory.FullName, "DockerContainerRunnerTest.cs"));
-            thisFileFromNginx.Should().Be(thisFileFromDisk);
+            var endpoints = containerInfo.PortMappings.Where(e => e.ContainerPort == 80).Select(e => e.HostEndpoint).ToList();
+            endpoints.Should().NotBeEmpty();
+            foreach (var url in endpoints.Select(endpoint => $"http://{endpoint}/DockerContainerRunnerTest.cs"))
+            {
+                TestOutputHelper.WriteLine($"GET {url}");
+                var result = await httpClient.GetAsync(url);
+                result.StatusCode.Should().Be(HttpStatusCode.OK);
+                var thisFileFromNginx = await result.Content.ReadAsStringAsync();
+                var thisFileFromDisk = await File.ReadAllTextAsync(Path.Combine(TestsDirectory.FullName, "DockerContainerRunnerTest.cs"));
+                thisFileFromNginx.Should().Be(thisFileFromDisk);
+            }
         }
-
-        private static DirectoryInfo GetTestsDirectory()
-        {
-            var assemblyDirectory = new FileInfo(Assembly.GetExecutingAssembly().Location).Directory;
-            var targetFrameworkDirectory = assemblyDirectory?.Name == "publish" ? assemblyDirectory.Parent?.Parent : assemblyDirectory;
-            var testsDirectoryInfo = targetFrameworkDirectory?.Parent?.Parent?.Parent ?? throw new FileNotFoundException("Tests directory not found");
-            return testsDirectoryInfo;
-        }
-
-        private void RunningCommand(object? sender, CommandEventArgs args)
-            => _testOutputHelper.WriteLine($"> {args.Command} {args.Arguments}");
-
-        private void RanCommand(object? sender, RanCommandEventArgs args)
-            => _testOutputHelper.WriteLine($">> {args.Command} {args.Arguments}{Environment.NewLine}{args.Output.TrimEnd('\n')}");
     }
 }
