@@ -25,12 +25,12 @@ namespace DockerRunner
         /// <summary>
         /// Get information about the started docker container.
         /// </summary>
-        public ContainerInfo ContainerInfo { get; protected set; } = null!;
+        public ContainerInfo ContainerInfo { get; private set; } = null!;
 
         /// <summary>
         /// Use <see cref="StartDockerContainerRunnerAsync"/> to create a <see cref="DockerContainerRunner"/>.
         /// </summary>
-        protected DockerContainerRunner(
+        private DockerContainerRunner(
             DockerContainerConfiguration configuration,
             EventHandler<CommandEventArgs>? runningCommand,
             EventHandler<RanCommandEventArgs>? ranCommand,

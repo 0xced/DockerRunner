@@ -11,15 +11,27 @@ namespace DockerRunner
     /// <summary>
     /// Provides docker database container lifecycle management.
     /// </summary>
-    public class DockerDatabaseContainerRunner : DockerContainerRunner
+    public class DockerDatabaseContainerRunner : IAsyncDisposable
     {
+        private readonly DockerContainerRunner _runner;
+
+        /// <summary>
+        /// Get information about the started docker container.
+        /// </summary>
+        public ContainerInfo ContainerInfo => _runner.ContainerInfo;
+
+        /// <summary>
+        /// The connection string to use to connect to the database.
+        /// </summary>
+        public string ConnectionString { get; }
+
         /// <summary>
         /// Use <see cref="StartDockerDatabaseContainerRunnerAsync"/> to create a <see cref="DockerDatabaseContainerRunner"/>.
         /// </summary>
-        protected DockerDatabaseContainerRunner(ContainerInfo containerInfo, string connectionString, DockerContainerConfiguration configuration, EventHandler<CommandEventArgs>? runningCommand, EventHandler<RanCommandEventArgs>? ranCommand, bool waitOnDispose) : base(configuration, runningCommand, ranCommand, waitOnDispose)
+        private DockerDatabaseContainerRunner(DockerContainerRunner runner, string connectionString)
         {
-            ContainerInfo = containerInfo;
-            ConnectionString = connectionString;
+            _runner = runner ?? throw new ArgumentNullException(nameof(runner));
+            ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
         /// <summary>
@@ -29,7 +41,7 @@ namespace DockerRunner
         /// <param name="runningCommand">An optional event handler raised when a command is running.</param>
         /// <param name="ranCommand">An optional event handler raised when a command has successfully finished running.</param>
         /// <param name="waitOnDispose">
-        /// If <c>true</c>, waits for the container to be fully stopped when the runner is disposed, in <see cref="DockerContainerRunner.DisposeAsync"/>.
+        /// If <c>true</c>, waits for the container to be fully stopped when the runner is disposed, in <see cref="DisposeAsync"/>.
         /// Using <c>false</c> is faster but no error will be reported if stopping the container fails.
         /// </param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that can be used to abort the start operation. Note that the container may actually continue to start.</param>
@@ -45,7 +57,7 @@ namespace DockerRunner
             bool waitOnDispose = false,
             CancellationToken cancellationToken = default)
         {
-            var runner = await StartDockerContainerRunnerAsync(configuration, runningCommand, ranCommand, waitOnDispose, cancellationToken);
+            var runner = await DockerContainerRunner.StartDockerContainerRunnerAsync(configuration, runningCommand, ranCommand, waitOnDispose, cancellationToken);
             var containerInfo = runner.ContainerInfo;
             var hostEndpoint = GetHostEndpoint(containerInfo.PortMappings, configuration);
             var connectionString = configuration.ConnectionString(hostEndpoint.Address.ToString(), (ushort)hostEndpoint.Port);
@@ -57,7 +69,7 @@ namespace DockerRunner
                 try
                 {
                     await connection.OpenAsync(cancellationToken);
-                    return new DockerDatabaseContainerRunner(containerInfo, connectionString, configuration, runningCommand, ranCommand, waitOnDispose);
+                    return new DockerDatabaseContainerRunner(runner, connectionString);
                 }
                 catch (Exception exception)
                 {
@@ -71,9 +83,12 @@ namespace DockerRunner
         }
 
         /// <summary>
-        /// The connection string to use to connect to the database.
+        /// Stops the container.
         /// </summary>
-        public string ConnectionString { get; }
+        public async ValueTask DisposeAsync()
+        {
+            await _runner.DisposeAsync();
+        }
 
         private static IPEndPoint GetHostEndpoint(IReadOnlyCollection<PortMapping> portMappings, DockerDatabaseContainerConfiguration configuration)
         {
