@@ -13,8 +13,9 @@ namespace DockerRunner.Tests
         }
 
         [Theory]
+        [InlineData(typeof(MySqlConfiguration))]
         [InlineData(typeof(PostgresConfiguration))]
-        public async Task RunPostgres(Type configurationType)
+        public async Task StartDockerDatabaseContainer(Type configurationType)
         {
             var configuration = (DockerDatabaseContainerConfiguration)(Activator.CreateInstance(configurationType) ?? throw new InvalidOperationException($"Activator.CreateInstance({configurationType}) returned null."));
             await using var runner = await DockerDatabaseContainerRunner.StartAsync(configuration, RunningCommand, RanCommand);
