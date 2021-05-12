@@ -9,30 +9,40 @@ using System.Threading.Tasks;
 
 namespace DockerRunner
 {
-    /// <inheritdoc cref="DockerRunner.IDockerContainerRunner"/>
-    public class DockerContainerRunner : IDockerContainerRunner, IAsyncDisposable
+    /// <summary>
+    /// Provides docker container lifecycle management.
+    /// </summary>
+    public class DockerContainerRunner : IAsyncDisposable
     {
-        private IDockerContainerConfiguration _configuration = null!;
-        private EventHandler<CommandEventArgs>? _runningCommand;
-        private EventHandler<RanCommandEventArgs>? _ranCommand;
-        private bool _waitOnDispose;
+        private readonly DockerContainerConfiguration _configuration;
+        private readonly EventHandler<CommandEventArgs>? _runningCommand;
+        private readonly EventHandler<RanCommandEventArgs>? _ranCommand;
+        private readonly bool _waitOnDispose;
 
         /// <summary>
         /// Get information about the started docker container.
         /// </summary>
-        public ContainerInfo ContainerInfo { get; private set; } = null!;
+        public ContainerInfo ContainerInfo { get; protected set; } = null!;
 
         /// <summary>
         /// Use <see cref="StartDockerContainerRunnerAsync"/> to create a <see cref="DockerContainerRunner"/>.
         /// </summary>
-        private DockerContainerRunner()
+        protected DockerContainerRunner(
+            DockerContainerConfiguration configuration,
+            EventHandler<CommandEventArgs>? runningCommand,
+            EventHandler<RanCommandEventArgs>? ranCommand,
+            bool waitOnDispose)
         {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _runningCommand = runningCommand;
+            _ranCommand = ranCommand;
+            _waitOnDispose = waitOnDispose;
         }
 
         /// <summary>
         /// Starts a docker container.
         /// </summary>
-        /// <param name="configuration">The <see cref="IDockerContainerConfiguration"/> defining how the container must start.</param>
+        /// <param name="configuration">The <see cref="DockerContainerConfiguration"/> defining how the container must start.</param>
         /// <param name="runningCommand">An optional event handler raised when a command is running.</param>
         /// <param name="ranCommand">An optional event handler raised when a command has successfully finished running.</param>
         /// <param name="waitOnDispose">
@@ -42,24 +52,24 @@ namespace DockerRunner
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that can be used to abort the start operation. Note that the container may actually continue to start.</param>
         /// <returns>The container runner that can be used to stop the container.</returns>
         public static async Task<DockerContainerRunner> StartDockerContainerRunnerAsync(
-            IDockerContainerConfiguration configuration,
+            DockerContainerConfiguration configuration,
             EventHandler<CommandEventArgs>? runningCommand = null,
             EventHandler<RanCommandEventArgs>? ranCommand = null,
             bool waitOnDispose = false,
             CancellationToken cancellationToken = default)
         {
-            var runner = new DockerContainerRunner();
-            runner._runningCommand += runningCommand;
-            runner._ranCommand += ranCommand;
-            runner._waitOnDispose = waitOnDispose;
-            runner.ContainerInfo = await runner.StartContainerAsync(configuration, cancellationToken);
+            var runner = new DockerContainerRunner(configuration, runningCommand, ranCommand, waitOnDispose);
+            runner.ContainerInfo = await runner.StartContainerAsync(cancellationToken);
             return runner;
         }
 
-        /// <inheritdoc />
-        public async Task<ContainerInfo> StartContainerAsync(IDockerContainerConfiguration configuration, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Starts a docker container.
+        /// </summary>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that can be used to abort the start operation. Note that the container may actually continue to start.</param>
+        /// <returns>The <see cref="ContainerInfo"/> holding information about the started docker container.</returns>
+        private async Task<ContainerInfo> StartContainerAsync(CancellationToken cancellationToken = default)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             var dockerStartDateTime = DateTime.Now;
 
             var arguments = GetDockerRunArguments();
@@ -79,10 +89,12 @@ namespace DockerRunner
             return new ContainerInfo(new ContainerId(containerId), host, ports);
         }
 
-        /// <inheritdoc />
-        public async Task StopContainerAsync(ContainerId containerId, bool wait, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Stops the container.
+        /// </summary>
+        public async ValueTask DisposeAsync()
         {
-            await RunDockerAsync($"stop \"{containerId}\"", waitForExit: wait, cancellationToken: cancellationToken);
+            await RunDockerAsync($"stop \"{ContainerInfo.ContainerId}\"", waitForExit: _waitOnDispose);
         }
 
         // See https://github.com/docker/compose/blob/1.24.0/compose/config/types.py#L127-L136
@@ -181,7 +193,8 @@ namespace DockerRunner
         {
             var startInfo = new ProcessStartInfo(command, arguments) { CreateNoWindow = true, UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true };
             using var process = new Process {StartInfo = startInfo};
-            _runningCommand?.Invoke(this, new CommandEventArgs(command, arguments));
+            var commandEventArgs = new CommandEventArgs(command, arguments);
+            _runningCommand?.Invoke(this, commandEventArgs);
             try
             {
                 process.Start();
@@ -196,21 +209,13 @@ namespace DockerRunner
                 var error = await process.StandardError.ReadToEndAsync();
                 if (exitCode != 0)
                 {
-                    throw new DockerCommandException(exitCode, error);
+                    throw new DockerCommandException(commandEventArgs, exitCode, error);
                 }
                 var output = await process.StandardOutput.ReadToEndAsync();
                 _ranCommand?.Invoke(this, new RanCommandEventArgs(command, arguments, output));
                 return trimResult ? (output.TrimEnd('\n'), error.TrimEnd('\n')) : (output, error);
             }
             return ("", "");
-        }
-
-        /// <summary>
-        /// Stops the container.
-        /// </summary>
-        public async ValueTask DisposeAsync()
-        {
-            await StopContainerAsync(ContainerInfo.ContainerId, wait: _waitOnDispose);
         }
     }
 }

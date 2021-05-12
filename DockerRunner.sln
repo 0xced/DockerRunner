@@ -1,8 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerRunner", "src\DockerRunner.csproj", "{D228A718-F4CA-407B-A635-BFCE6C3952A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerRunner", "src\DockerRunner\DockerRunner.csproj", "{D228A718-F4CA-407B-A635-BFCE6C3952A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerRunner.Xunit", "src\DockerRunner.Xunit\DockerRunner.Xunit.csproj", "{912761C0-8FB6-4DB4-95C6-3639D6149472}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerRunner.Tests", "tests\DockerRunner.Tests.csproj", "{47A1A749-ED16-441D-B4AD-D04CCECD90DA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{326A78D3-285B-4142-848D-E5061614D301}"
+ProjectSection(SolutionItems) = preProject
+	src\Directory.Build.props = src\Directory.Build.props
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,9 +21,17 @@ Global
 		{D228A718-F4CA-407B-A635-BFCE6C3952A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D228A718-F4CA-407B-A635-BFCE6C3952A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D228A718-F4CA-407B-A635-BFCE6C3952A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{912761C0-8FB6-4DB4-95C6-3639D6149472}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{912761C0-8FB6-4DB4-95C6-3639D6149472}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{912761C0-8FB6-4DB4-95C6-3639D6149472}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{912761C0-8FB6-4DB4-95C6-3639D6149472}.Release|Any CPU.Build.0 = Release|Any CPU
 		{47A1A749-ED16-441D-B4AD-D04CCECD90DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{47A1A749-ED16-441D-B4AD-D04CCECD90DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47A1A749-ED16-441D-B4AD-D04CCECD90DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47A1A749-ED16-441D-B4AD-D04CCECD90DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D228A718-F4CA-407B-A635-BFCE6C3952A6} = {326A78D3-285B-4142-848D-E5061614D301}
+		{912761C0-8FB6-4DB4-95C6-3639D6149472} = {326A78D3-285B-4142-848D-E5061614D301}
 	EndGlobalSection
 EndGlobal

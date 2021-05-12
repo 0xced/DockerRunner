@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\DockerRunner.csproj" />
+    <ProjectReference Include="..\src\DockerRunner\DockerRunner.csproj" />
   </ItemGroup>
 
 </Project>

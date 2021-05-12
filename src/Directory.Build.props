@@ -1,8 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+<Project>
 
   <PropertyGroup Label="Compilation">
     <LangVersion>8.0</LangVersion>
@@ -19,11 +15,9 @@
   <PropertyGroup Label="Publishing">
     <Authors>Cédric Luthi</Authors>
     <Copyright>Copyright © Cédric Luthi</Copyright>
-    <Description>Manage docker containers lifecycle</Description>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/0xced/DockerRunner</PackageProjectUrl>
-    <PackageTags>Docker Container</PackageTags>
     <RepositoryUrl>https://github.com/0xced/DockerRunner</RepositoryUrl>
   </PropertyGroup>
 
@@ -32,16 +26,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="../images/icon.png">
+    <None Include="../../images/icon.png">
       <Pack>True</Pack>
       <PackagePath />
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.6.13" PrivateAssets="All" />
-    <PackageReference Include="MinVer" Version="2.3.0" PrivateAssets="All" />
+    <PackageReference Include="MinVer" Version="2.3.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
 

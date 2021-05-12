@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--
+    Multi-targeting is required because the Xunit.Sdk.DiagnosticMessage class is in different assemblies in the xunit.extensibility.execution NuGet package:
+    xunit.execution.desktop.dll for .NET Framework and xunit.execution.dotnet.dll for .NET Core
+    Targeting netstandard2.0 only makes DockerRunner.Xunit reference xunit.execution.dotnet instead of xunit.execution.desktop and throws at runtime on .NET Framework:
+    > System.IO.FileNotFoundException : Could not load file or assembly 'xunit.execution.dotnet, Version=2.4.1.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c' or one of its dependencies.
+    -->
+    <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Publishing">
+    <Description>xUnit fixtures for running docker containers</Description>
+    <PackageTags>Docker Container Database Xunit</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DockerRunner\DockerRunner.csproj" />
+  </ItemGroup>
+
+</Project>
