@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -46,8 +47,8 @@ namespace DockerRunner
         {
             var runner = await StartDockerContainerRunnerAsync(configuration, runningCommand, ranCommand, waitOnDispose, cancellationToken);
             var containerInfo = runner.ContainerInfo;
-            var hostPort = GetHostPort(containerInfo.PortMappings, configuration);
-            var connectionString = configuration.ConnectionString(containerInfo.Host, hostPort);
+            var hostEndpoint = GetHostEndpoint(containerInfo.PortMappings, configuration);
+            var connectionString = configuration.ConnectionString(hostEndpoint.Address.ToString(), (ushort)hostEndpoint.Port);
             var stopWatch = Stopwatch.StartNew();
             while (true)
             {
@@ -74,33 +75,34 @@ namespace DockerRunner
         /// </summary>
         public string ConnectionString { get; }
 
-        private static ushort GetHostPort(IReadOnlyCollection<PortMapping> portMappings, DockerDatabaseContainerConfiguration configuration)
+        private static IPEndPoint GetHostEndpoint(IReadOnlyCollection<PortMapping> portMappings, DockerDatabaseContainerConfiguration configuration)
         {
             var containerPort = configuration.Port;
-            switch (portMappings.Count)
+            var containerPorts = portMappings.Select(e => e.ContainerPort).Distinct().ToList();
+            switch (containerPorts.Count)
             {
                 case 0:
                     throw new InvalidOperationException("The docker container does not expose any port.");
                 case 1:
                 {
-                    var portMapping = portMappings.Single();
+                    var portMapping = portMappings.First();
                     if (containerPort.HasValue && containerPort.Value != portMapping.ContainerPort)
                     {
                         throw new InvalidOperationException($"The port defined in the configuration ({containerPort}) does not match the port exposed by the docker container ({portMapping.ContainerPort}). Either change the port to null for automatic detection or to {portMapping.ContainerPort}.");
                     }
-                    return portMapping.HostPort;
+                    return portMapping.HostEndpoint;
                 }
             }
-            var hostPort = portMappings.FirstOrDefault(e => e.ContainerPort == containerPort)?.HostPort;
-            if (!hostPort.HasValue)
+            var hostEndpoint = portMappings.FirstOrDefault(e => e.ContainerPort == containerPort)?.HostEndpoint;
+            if (hostEndpoint == null)
             {
                 if (containerPort == null)
                 {
-                    throw new InvalidOperationException($"The docker container based on image '{configuration.ImageName}' exposes {portMappings.Count} ports: {string.Join(",", portMappings.Select(e => e.ContainerPort))}. Please specify which one to use with the {configuration.GetType().FullName}.{nameof(configuration.Port)} property.");
+                    throw new InvalidOperationException($"The docker container based on image '{configuration.ImageName}' exposes {containerPorts.Count} ports: {string.Join(",", containerPorts)}. Please specify which one to use with the {configuration.GetType().FullName}.{nameof(configuration.Port)} property.");
                 }
-                throw new InvalidOperationException($"The docker container based on image '{configuration.ImageName}' does not expose port {containerPort}. The exposed ports are {string.Join(",", portMappings.Select(e => e.ContainerPort))}. Please specify which one to use with the {configuration.GetType().FullName}.{nameof(configuration.Port)} property.");
+                throw new InvalidOperationException($"The docker container based on image '{configuration.ImageName}' does not expose port {containerPort}. The exposed ports are {string.Join(",", containerPorts)}. Please specify which one to use with the {configuration.GetType().FullName}.{nameof(configuration.Port)} property.");
             }
-            return hostPort.Value;
+            return hostEndpoint;
         }
     }
 }

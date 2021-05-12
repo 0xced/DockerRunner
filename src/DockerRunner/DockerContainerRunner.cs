@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -78,17 +79,7 @@ namespace DockerRunner
             var containerId = (await RunDockerAsync("run " + arguments, cancellationToken: cancellationToken)).output;
             var ports = await DockerContainerGetPortsAsync(dockerStartDateTime, containerId, cancellationToken);
 
-            var hostFormat = Environment.GetEnvironmentVariable("DOCKERRUNNER_HOST_FORMAT");
-            if (hostFormat != null)
-            {
-                // The idea is to use {{ .NetworkSettings.Networks.nat.IPAddress }} or whatever network is configured on Docker on CI, e.g. AppVeyor
-                // See https://github.com/docker/for-win/issues/204 and https://stackoverflow.com/questions/44817861/windows-container-port-binding-not-working-on-windows-server-2016-using-docker/44827162#44827162
-                var address = (await RunDockerAsync($"inspect {containerId} --format={hostFormat}", cancellationToken: cancellationToken)).output;
-                return new ContainerInfo(new ContainerId(containerId), address, ports);
-            }
-
-            var host = await DockerGetHostAsync(cancellationToken);
-            return new ContainerInfo(new ContainerId(containerId), host, ports);
+            return new ContainerInfo(new ContainerId(containerId), ports);
         }
 
         /// <summary>
@@ -142,30 +133,19 @@ namespace DockerRunner
             return string.Join(" ", arguments);
         }
 
-        private async Task<string> DockerGetHostAsync(CancellationToken cancellationToken)
-        {
-            try
-            {
-                return (await RunProcessAsync("docker-machine", "ip", cancellationToken: cancellationToken)).output;
-            }
-            catch (Exception)
-            {
-                return "127.0.0.1";
-            }
-        }
-
         private async Task<IReadOnlyList<PortMapping>> DockerContainerGetPortsAsync(DateTime dockerStartDateTime, string containerId, CancellationToken cancellationToken)
         {
             var portLines = (await RunDockerAsync($"port {containerId}", cancellationToken: cancellationToken)).output;
             using var reader = new StringReader(portLines);
-            var ports = new HashSet<PortMapping>(PortMapping.Comparer);
+            var ports = new List<PortMapping>();
             string portLine;
             while ((portLine = await reader.ReadLineAsync()) != null)
             {
                 var match = Regex.Match(portLine, @"(?<containerPort>\d+)/.* -> (?<ipAddress>.*):(?<hostPort>\d+)");
                 var containerPort = match.Groups["containerPort"];
+                var ipAddress = match.Groups["ipAddress"];
                 var hostPort = match.Groups["hostPort"];
-                if (!(containerPort.Success && hostPort.Success))
+                if (!match.Success)
                 {
                     string logs;
                     try
@@ -181,12 +161,22 @@ namespace DockerRunner
                     throw new DockerException($"Failed to retrieve the port mapping for container {containerId}. Maybe the container failed to start properly? {message}");
                 }
 
-                var ipAddress = match.Groups["ipAddress"];
-                var addressFamily = ipAddress.Success && IPAddress.TryParse(ipAddress.Value, out var address) ? address.AddressFamily : AddressFamily.Unknown;
+                if (!IPAddress.TryParse(ipAddress.Value, out var address))
+                {
+                    throw new DockerException($"Failed to retrieve the port mapping for container {containerId} because '{ipAddress.Value}' could not be parsed as an IPAddress.");
+                }
 
-                ports.Add(new PortMapping(hostPort: ushort.Parse(hostPort.Value), containerPort: ushort.Parse(containerPort.Value), addressFamily));
+                var endpointAddress = address.AddressFamily switch
+                {
+                    AddressFamily.InterNetwork => IPAddress.Loopback,
+                    AddressFamily.InterNetworkV6 => IPAddress.IPv6Loopback,
+                    _ => throw new DockerException($"Failed to retrieve the port mapping for container {containerId} because the IP address family ({address.AddressFamily}) of '{ipAddress.Value}' is not supported.")
+                };
+                var hostEndpoint = new IPEndPoint(endpointAddress, ushort.Parse(hostPort.Value, NumberStyles.None, CultureInfo.InvariantCulture));
+
+                ports.Add(new PortMapping(hostEndpoint, containerPort: ushort.Parse(containerPort.Value, NumberStyles.None, CultureInfo.InvariantCulture)));
             }
-            return ports.ToList();
+            return ports;
         }
 
         private async Task<(string output, string error)> RunDockerAsync(string arguments, bool waitForExit = true, bool trimResult = true, CancellationToken cancellationToken = default)
