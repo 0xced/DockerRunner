@@ -87,7 +87,7 @@ namespace DockerRunner
         /// </summary>
         public async ValueTask DisposeAsync()
         {
-            await RunDockerAsync($"stop \"{ContainerInfo.ContainerId}\"", waitForExit: _waitOnDispose);
+            await RunDockerAsync($"stop {QuoteIfNeeded(ContainerInfo.ContainerId.ToString())}", waitForExit: _waitOnDispose);
         }
 
         // See https://github.com/docker/compose/blob/1.24.0/compose/config/types.py#L127-L136
@@ -104,23 +104,23 @@ namespace DockerRunner
         {
             if (storage is DockerVolume volume)
             {
-                return $"--mount type=volume,source=\"{volume.Name}\",destination=\"{volume.Destination}\"";
+                return $"--mount type=volume,source={QuoteIfNeeded(volume.Name)},destination={QuoteIfNeeded(volume.Destination)}";
             }
             if (storage is DockerBindMount bindMount)
             {
                 var readOnlySuffix = bindMount.IsReadOnly ? ",readonly" : "";
-                return $"--mount type=bind,source=\"{NormalizedPath(bindMount.Source)}\",destination=\"{bindMount.Destination}\"{readOnlySuffix}";
+                return $"--mount type=bind,source={QuoteIfNeeded(NormalizedPath(bindMount.Source))},destination={QuoteIfNeeded(bindMount.Destination)}{readOnlySuffix}";
             }
             if (storage is DockerTmpfsMount tmpfsMount)
             {
-                return $"--mount type=tmpfs,destination=\"{tmpfsMount.Destination}\"";
+                return $"--mount type=tmpfs,destination={QuoteIfNeeded(tmpfsMount.Destination)}";
             }
             throw new NotSupportedException($"Unsupported {nameof(DockerStorage)} type: {storage.GetType().FullName}");
         }
 
         private string GetDockerRunArguments()
         {
-            var environmentVariablesArguments = _configuration.EnvironmentVariables.Select(e => $"--env \"{e.Key}\"=\"{e.Value}\"");
+            var environmentVariablesArguments = _configuration.EnvironmentVariables.Select(e => $"--env {QuoteIfNeeded(e.Key)}={QuoteIfNeeded(e.Value)}");
             var mountArguments = _configuration.Storage.Select(GetMountArguments);
             var arguments = environmentVariablesArguments.Concat(mountArguments)
                 .Concat(new []
@@ -128,14 +128,14 @@ namespace DockerRunner
                     "--publish-all",
                     "--detach",
                     "--rm",
-                    $"\"{_configuration.ImageName}\"",
+                    $"{QuoteIfNeeded(_configuration.ImageName)}",
                 });
             return string.Join(" ", arguments);
         }
 
         private async Task<IReadOnlyList<PortMapping>> DockerContainerGetPortsAsync(DateTime dockerStartDateTime, string containerId, CancellationToken cancellationToken)
         {
-            var portLines = (await RunDockerAsync($"port {containerId}", cancellationToken: cancellationToken)).output;
+            var portLines = (await RunDockerAsync($"port {QuoteIfNeeded(containerId)}", cancellationToken: cancellationToken)).output;
             using var reader = new StringReader(portLines);
             var ports = new List<PortMapping>();
             string portLine;
@@ -150,7 +150,7 @@ namespace DockerRunner
                     string logs;
                     try
                     {
-                        var (output, error) = await RunDockerAsync($"logs --since {dockerStartDateTime:O} {containerId}", trimResult: false, cancellationToken: cancellationToken);
+                        var (output, error) = await RunDockerAsync($"logs --since {dockerStartDateTime:O} {QuoteIfNeeded(containerId)}", trimResult: false, cancellationToken: cancellationToken);
                         logs = !string.IsNullOrWhiteSpace(error) ? error : output;
                     }
                     catch
@@ -211,6 +211,21 @@ namespace DockerRunner
                 return trimResult ? (output.TrimEnd('\n'), error.TrimEnd('\n')) : (output, error);
             }
             return ("", "");
+        }
+
+        private static string QuoteIfNeeded(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            if (text.Contains(" "))
+            {
+                return "\"" + text + "\"";
+            }
+
+            return text;
         }
     }
 }
