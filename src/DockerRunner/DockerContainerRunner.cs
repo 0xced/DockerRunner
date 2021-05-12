@@ -78,7 +78,7 @@ namespace DockerRunner
             var containerId = (await RunDockerAsync("run " + arguments, cancellationToken: cancellationToken)).output;
             var ports = await DockerContainerGetPortsAsync(dockerStartDateTime, containerId, cancellationToken);
 
-            var hostFormat = Environment.GetEnvironmentVariable("XUNIT_FIXTURE_DOCKER_HOST_FORMAT");
+            var hostFormat = Environment.GetEnvironmentVariable("DOCKERRUNNER_HOST_FORMAT");
             if (hostFormat != null)
             {
                 // The idea is to use {{ .NetworkSettings.Networks.nat.IPAddress }} or whatever network is configured on Docker on CI, e.g. AppVeyor
@@ -158,7 +158,7 @@ namespace DockerRunner
         {
             var portLines = (await RunDockerAsync($"port {containerId}", cancellationToken: cancellationToken)).output;
             using var reader = new StringReader(portLines);
-            var ports = new List<PortMapping>();
+            var ports = new HashSet<PortMapping>(PortMapping.Comparer);
             string portLine;
             while ((portLine = await reader.ReadLineAsync()) != null)
             {
@@ -186,7 +186,7 @@ namespace DockerRunner
 
                 ports.Add(new PortMapping(hostPort: ushort.Parse(hostPort.Value), containerPort: ushort.Parse(containerPort.Value), addressFamily));
             }
-            return ports;
+            return ports.ToList();
         }
 
         private async Task<(string output, string error)> RunDockerAsync(string arguments, bool waitForExit = true, bool trimResult = true, CancellationToken cancellationToken = default)
