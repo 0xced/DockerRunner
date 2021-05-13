@@ -18,12 +18,17 @@ namespace DockerRunner.Tests
         [Fact]
         public async Task ReadFileFromNginx()
         {
-            var configuration = new NginxDockerContainerConfiguration(TestsDirectory);
-            await using var runner = await DockerContainerRunner.StartAsync(configuration, RunningCommand, RanCommand);
-            var containerInfo = runner.ContainerInfo;
+            // Arrange
             var httpClient = new HttpClient();
-            var endpoints = containerInfo.PortMappings.Where(e => e.ContainerPort == 80).Select(e => e.HostEndpoint).ToList();
+            var configuration = new NginxDockerContainerConfiguration(TestsDirectory);
+
+            // Act
+            await using var runner = await DockerContainerRunner.StartAsync(configuration, RunningCommand, RanCommand);
+
+            // Assert
+            var endpoints = runner.ContainerInfo.PortMappings.Where(e => e.ContainerPort == 80).Select(e => e.HostEndpoint).ToList();
             endpoints.Should().NotBeEmpty();
+
             foreach (var url in endpoints.Select(endpoint => $"http://{endpoint}/DockerContainerRunnerTest.cs"))
             {
                 TestOutputHelper.WriteLine($"GET {url}");
