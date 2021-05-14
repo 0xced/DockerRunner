@@ -58,8 +58,7 @@ namespace DockerRunner
             CancellationToken cancellationToken = default)
         {
             var runner = await DockerContainerRunner.StartAsync(configuration, runningCommand, ranCommand, waitOnDispose, cancellationToken);
-            var containerInfo = runner.ContainerInfo;
-            var hostEndpoint = GetHostEndpoint(containerInfo.PortMappings, configuration);
+            var hostEndpoint = GetHostEndpoint(runner.ContainerInfo.PortMappings, configuration);
             var connectionString = configuration.ConnectionString(hostEndpoint.Address.ToString(), (ushort)hostEndpoint.Port);
             var stopWatch = Stopwatch.StartNew();
             while (true)
@@ -97,7 +96,7 @@ namespace DockerRunner
             switch (containerPorts.Count)
             {
                 case 0:
-                    throw new InvalidOperationException("The docker container does not expose any port.");
+                    throw new InvalidOperationException($"The docker container does not expose any port. Please specify which port(s) to expose with the {configuration.GetType().FullName}.{nameof(configuration.ExposePorts)} property.");
                 case 1:
                 {
                     var portMapping = portMappings.First();
