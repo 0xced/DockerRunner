@@ -14,6 +14,7 @@ namespace DockerRunner.Tests
 
         [Theory]
         [InlineData(typeof(MySqlConfiguration))]
+        [InlineData(typeof(OracleConfiguration))]
         [InlineData(typeof(PostgresConfiguration))]
         public async Task StartDockerDatabaseContainer(Type configurationType)
         {
