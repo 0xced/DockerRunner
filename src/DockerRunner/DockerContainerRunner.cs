@@ -73,8 +73,9 @@ namespace DockerRunner
         /// <returns>The <see cref="ContainerInfo"/> holding information about the started docker container.</returns>
         private async Task<ContainerInfo> StartContainerAsync(CancellationToken cancellationToken = default)
         {
-            var dockerStartDateTime = DateTime.Now;
+            await RunDockerAsync($"pull {QuoteIfNeeded(_configuration.ImageName)}", cancellationToken: cancellationToken);
 
+            var dockerStartDateTime = DateTime.Now;
             var arguments = GetDockerRunArguments();
             var containerId = (await RunDockerAsync("run " + arguments, cancellationToken: cancellationToken)).output;
             var ports = await DockerContainerGetPortsAsync(dockerStartDateTime, containerId, cancellationToken);
