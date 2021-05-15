@@ -13,6 +13,7 @@ namespace DockerRunner.Tests
         }
 
         [Theory]
+        [InlineData(typeof(MariaDBConfiguration))]
         [InlineData(typeof(MySqlConfiguration))]
         [InlineData(typeof(MySqlConnectorConfiguration))]
         [InlineData(typeof(OracleConfiguration))]
