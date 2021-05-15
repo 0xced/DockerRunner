@@ -25,6 +25,13 @@ namespace DockerRunner
         public virtual string? ContainerName => $"DockerRunner_{GetType().FullName}_{Guid.NewGuid()}";
 
         /// <summary>
+        /// Automatically remove the container when it exits.
+        /// <para>Defaults to <see langword="true"/>.</para>
+        /// <para>Use <see langword="false"/> if you need to diagnose a container that doesn't behave as expected after it has exited.</para>
+        /// </summary>
+        public virtual bool Remove => true;
+
+        /// <summary>
         /// Environment variables to pass to the container.
         /// See the documentation of the docker image for supported environment variables.
         /// </summary>

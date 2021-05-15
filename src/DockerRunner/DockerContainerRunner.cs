@@ -126,15 +126,17 @@ namespace DockerRunner
             var exposeArguments = _configuration.ExposePorts.Select(e => $"--expose {e}");
             var containerName = _configuration.ContainerName;
             var nameArguments = string.IsNullOrEmpty(containerName) ? Enumerable.Empty<string>() : new[] { $"--name {QuoteIfNeeded(containerName!)}" };
+            var remove = _configuration.Remove;
+            var removeArguments = remove ? new[] { "--rm" } : Enumerable.Empty<string>();
             var arguments = environmentVariablesArguments
                 .Concat(mountArguments)
                 .Concat(exposeArguments)
                 .Concat(nameArguments)
+                .Concat(removeArguments)
                 .Concat(new[]
                 {
                     "--publish-all",
                     "--detach",
-                    "--rm",
                     $"{QuoteIfNeeded(_configuration.ImageName)}",
                 });
             return string.Join(" ", arguments);
