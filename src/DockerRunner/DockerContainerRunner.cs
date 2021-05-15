@@ -124,8 +124,13 @@ namespace DockerRunner
             var environmentVariablesArguments = _configuration.EnvironmentVariables.Select(e => $"--env {QuoteIfNeeded(e.Key)}={QuoteIfNeeded(e.Value)}");
             var mountArguments = _configuration.Storage.Select(GetMountArguments);
             var exposeArguments = _configuration.ExposePorts.Select(e => $"--expose {e}");
-            var arguments = environmentVariablesArguments.Concat(mountArguments).Concat(exposeArguments)
-                .Concat(new []
+            var containerName = _configuration.ContainerName;
+            var nameArguments = string.IsNullOrEmpty(containerName) ? Enumerable.Empty<string>() : new[] { $"--name {QuoteIfNeeded(containerName!)}" };
+            var arguments = environmentVariablesArguments
+                .Concat(mountArguments)
+                .Concat(exposeArguments)
+                .Concat(nameArguments)
+                .Concat(new[]
                 {
                     "--publish-all",
                     "--detach",

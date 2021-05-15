@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,6 +15,14 @@ namespace DockerRunner
         /// <example>mysql/mysql-server:5.7</example>
         /// <example>redis</example>
         public abstract string ImageName { get; }
+
+        /// <summary>
+        /// The docker container name.
+        /// <para>Defaults to <c>DockerRunner_{fully qualified name of configuration}_{a random guid}</c></para>
+        /// <para>Use <see langword="null"/> or an empty string to let Docker assign a random two-words container name.</para>
+        /// </summary>
+        /// <remarks>The container name must match the following regular expression: <c>[a-zA-Z0-9][a-zA-Z0-9_.-]+</c></remarks>
+        public virtual string? ContainerName => $"DockerRunner_{GetType().FullName}_{Guid.NewGuid()}";
 
         /// <summary>
         /// Environment variables to pass to the container.
