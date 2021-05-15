@@ -58,26 +58,39 @@ namespace DockerRunner
             CancellationToken cancellationToken = default)
         {
             var runner = await DockerContainerRunner.StartAsync(configuration, runningCommand, ranCommand, waitOnDispose, cancellationToken);
-            var hostEndpoint = GetHostEndpoint(runner.ContainerInfo.PortMappings, configuration);
-            var connectionString = configuration.ConnectionString(hostEndpoint.Address.ToString(), (ushort)hostEndpoint.Port);
-            var stopWatch = Stopwatch.StartNew();
-            while (true)
+            try
             {
-                using var connection = configuration.ProviderFactory.CreateConnection() ?? throw new InvalidOperationException($"Failed to create a connection with {configuration.ProviderFactory} because CreateConnection() returned null.");
-                connection.ConnectionString = connectionString;
-                try
+                var hostEndpoint = GetHostEndpoint(runner.ContainerInfo.PortMappings, configuration);
+                var connectionString = configuration.ConnectionString(hostEndpoint.Address.ToString(), (ushort)hostEndpoint.Port);
+                var stopWatch = Stopwatch.StartNew();
+                while (true)
                 {
-                    await connection.OpenAsync(cancellationToken);
-                    return new DockerDatabaseContainerRunner(runner, connectionString);
-                }
-                catch (Exception exception)
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(value: 1), cancellationToken);
-                    if (stopWatch.Elapsed > configuration.Timeout)
+                    var dbProviderFactory = configuration.ProviderFactory;
+                    if (dbProviderFactory == null)
                     {
-                        throw new TimeoutException($"Database was not available on \"{connectionString}\" after waiting for {configuration.Timeout.TotalSeconds:F1} seconds.", exception);
+                        throw new InvalidOperationException($"The {configuration.GetType().FullName}.{nameof(configuration.ProviderFactory)} must be a non-null ProviderFactory instance.");
+                    }
+                    using var connection = dbProviderFactory.CreateConnection() ?? throw new InvalidOperationException($"Failed to create a connection with {dbProviderFactory} because CreateConnection() returned null.");
+                    connection.ConnectionString = connectionString;
+                    try
+                    {
+                        await connection.OpenAsync(cancellationToken);
+                        return new DockerDatabaseContainerRunner(runner, connectionString);
+                    }
+                    catch (Exception exception)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(value: 1), cancellationToken);
+                        if (stopWatch.Elapsed > configuration.Timeout)
+                        {
+                            throw new TimeoutException($"Database was not available on \"{connectionString}\" after waiting for {configuration.Timeout.TotalSeconds:F1} seconds.", exception);
+                        }
                     }
                 }
+            }
+            catch
+            {
+                await runner.DisposeAsync();
+                throw;
             }
         }
 
