@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Publishing">
+    <Description>Provides Postgres database configuration for DockerRunner using the Npgsql ADO.NET driver</Description>
+    <PackageTags>Docker Container Database Postgres PostgreSQL Npgsql</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DockerRunner\DockerRunner.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Version 3.1.0 is the first version to support .NET Standard -->
+    <PackageReference Include="Npgsql" Version="3.1.0" />
+  </ItemGroup>
+
+</Project>

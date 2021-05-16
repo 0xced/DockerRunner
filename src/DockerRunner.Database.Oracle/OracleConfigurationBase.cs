@@ -1,21 +1,25 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Common;
 using Oracle.ManagedDataAccess.Client;
 
-namespace DockerRunner.Tests
+namespace DockerRunner.Database.Oracle
 {
-    public class OracleConfiguration : DockerDatabaseContainerConfiguration
+    /// <summary>
+    /// Base configuration for the [Oracle docker image](https://hub.docker.com/r/gvenzl/oracle-xe)
+    /// defining everything required for Oracle to run except for <see cref="DockerContainerConfiguration.ImageName"/>
+    /// which must be defined in subclasses.
+    /// </summary>
+    public abstract class OracleConfigurationBase : DockerDatabaseContainerConfiguration
     {
-        protected virtual string User => "oracle";
-        protected virtual string Password => "docker";
+        private const string User = "oracle";
+        private const string Password = "docker";
 
         /// <inheritdoc />
         public override string ConnectionString(string host, ushort port)
         {
             var builder = new OracleConnectionStringBuilder
             {
-                DataSource = $"(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST={host})(PORT={port})))",
+                DataSource = $"(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST={host})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME=XE)))",
                 UserID = User,
                 Password = Password,
             };
@@ -24,11 +28,6 @@ namespace DockerRunner.Tests
 
         /// <inheritdoc />
         public override DbProviderFactory ProviderFactory => OracleClientFactory.Instance;
-
-        /// <summary>
-        /// The official Oracle image from https://hub.docker.com/r/gvenzl/oracle-xe
-        /// </summary>
-        public override string ImageName => "gvenzl/oracle-xe:11-slim";
 
         /// <inheritdoc />
         public override IReadOnlyDictionary<string, string> EnvironmentVariables => new Dictionary<string, string>
@@ -40,8 +39,5 @@ namespace DockerRunner.Tests
 
         /// <inheritdoc />
         public override IEnumerable<ushort> ExposePorts => new ushort[] { 1521 };
-
-        /// <inheritdoc />
-        public override TimeSpan Timeout => TimeSpan.FromMinutes(1);
     }
 }

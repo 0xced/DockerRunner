@@ -11,6 +11,12 @@ ProjectSection(SolutionItems) = preProject
 	src\Directory.Build.props = src\Directory.Build.props
 EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerRunner.Database.MySql", "src\DockerRunner.Database.MySql\DockerRunner.Database.MySql.csproj", "{A7486FE2-7FF3-4034-8D63-5D4DDA76DD11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerRunner.Database.Npgsql", "src\DockerRunner.Database.Npgsql\DockerRunner.Database.Npgsql.csproj", "{AFE0E990-6EF7-4F59-A541-01897E1431DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerRunner.Database.Oracle", "src\DockerRunner.Database.Oracle\DockerRunner.Database.Oracle.csproj", "{82223A7B-2C65-476D-AFE1-3CB85BBE7DE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,9 +35,24 @@ Global
 		{47A1A749-ED16-441D-B4AD-D04CCECD90DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47A1A749-ED16-441D-B4AD-D04CCECD90DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47A1A749-ED16-441D-B4AD-D04CCECD90DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7486FE2-7FF3-4034-8D63-5D4DDA76DD11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7486FE2-7FF3-4034-8D63-5D4DDA76DD11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7486FE2-7FF3-4034-8D63-5D4DDA76DD11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7486FE2-7FF3-4034-8D63-5D4DDA76DD11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE0E990-6EF7-4F59-A541-01897E1431DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE0E990-6EF7-4F59-A541-01897E1431DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE0E990-6EF7-4F59-A541-01897E1431DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE0E990-6EF7-4F59-A541-01897E1431DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82223A7B-2C65-476D-AFE1-3CB85BBE7DE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82223A7B-2C65-476D-AFE1-3CB85BBE7DE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82223A7B-2C65-476D-AFE1-3CB85BBE7DE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82223A7B-2C65-476D-AFE1-3CB85BBE7DE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D228A718-F4CA-407B-A635-BFCE6C3952A6} = {326A78D3-285B-4142-848D-E5061614D301}
 		{912761C0-8FB6-4DB4-95C6-3639D6149472} = {326A78D3-285B-4142-848D-E5061614D301}
+		{A7486FE2-7FF3-4034-8D63-5D4DDA76DD11} = {326A78D3-285B-4142-848D-E5061614D301}
+		{AFE0E990-6EF7-4F59-A541-01897E1431DE} = {326A78D3-285B-4142-848D-E5061614D301}
+		{82223A7B-2C65-476D-AFE1-3CB85BBE7DE1} = {326A78D3-285B-4142-848D-E5061614D301}
 	EndGlobalSection
 EndGlobal

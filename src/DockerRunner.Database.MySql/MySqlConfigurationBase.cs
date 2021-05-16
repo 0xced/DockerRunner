@@ -1,15 +1,19 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Common;
 using MySql.Data.MySqlClient;
 
-namespace DockerRunner.Tests
+namespace DockerRunner.Database.MySql
 {
-    public class MySqlConfiguration : DockerDatabaseContainerConfiguration
+    /// <summary>
+    /// Base configuration for MySQL and MariaDB docker images defining everything required for
+    /// MySQL/MariaDB to run except for <see cref="DockerContainerConfiguration.ImageName"/>
+    /// which must be defined in subclasses.
+    /// </summary>
+    public abstract class MySqlConfigurationBase : DockerDatabaseContainerConfiguration
     {
-        protected virtual string Database => "database";
-        protected virtual string User => "root";
-        protected virtual string Password => "docker";
+        private const string Database = "database";
+        private const string User = "root";
+        private const string Password = "docker";
 
         /// <inheritdoc />
         public override string ConnectionString(string host, ushort port)
@@ -32,16 +36,11 @@ namespace DockerRunner.Tests
         public override ushort? Port => 3306;
 
         /// <inheritdoc />
-        public override string ImageName => "mysql/mysql-server";
-
-        /// <inheritdoc />
         public override IReadOnlyDictionary<string, string> EnvironmentVariables => new Dictionary<string, string>
         {
             ["MYSQL_DATABASE"] = Database,
             ["MYSQL_ROOT_PASSWORD"] = Password,
             ["MYSQL_ROOT_HOST"] = "%",
         };
-
-        public override TimeSpan Timeout => TimeSpan.FromMinutes(1);
     }
 }

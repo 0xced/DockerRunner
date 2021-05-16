@@ -27,7 +27,8 @@ namespace DockerRunner
 
         /// <summary>
         /// The amount of time to wait for the database to be available after the docker container has started before giving up.
+        /// <para>Defaults to 30 seconds.</para>
         /// </summary>
-        public virtual TimeSpan Timeout { get; } = TimeSpan.FromSeconds(15);
+        public virtual TimeSpan Timeout { get; } = TimeSpan.FromSeconds(30);
     }
 }

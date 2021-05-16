@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Publishing">
+    <Description>Provides MySql and MariaDB database configurations for DockerRunner using the MySql.Data ADO.NET driver</Description>
+    <PackageTags>Docker Container Database MySql MariaDB</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DockerRunner\DockerRunner.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Version 6.10.7 is the first version to support .NET Standard -->
+    <PackageReference Include="MySql.Data" Version="6.10.7" />
+  </ItemGroup>
+
+</Project>
