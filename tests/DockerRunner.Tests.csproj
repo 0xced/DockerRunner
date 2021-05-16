@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\DockerRunner.Database.MySql\DockerRunner.Database.MySql.csproj" />
+    <ProjectReference Include="..\src\DockerRunner.Database.MySqlConnector\DockerRunner.Database.MySqlConnector.csproj" />
     <ProjectReference Include="..\src\DockerRunner.Database.Npgsql\DockerRunner.Database.Npgsql.csproj" />
     <ProjectReference Include="..\src\DockerRunner.Database.Oracle\DockerRunner.Database.Oracle.csproj" />
     <ProjectReference Include="..\src\DockerRunner\DockerRunner.csproj" />

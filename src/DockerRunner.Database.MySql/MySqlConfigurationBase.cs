@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
-using MySql.Data.MySqlClient;
 
+#if DRIVER_MYSQLDATA
 namespace DockerRunner.Database.MySql
+#elif DRIVER_MYSQLCONNECTOR
+namespace DockerRunner.Database.MySqlConnector
+#else
+#error Either DRIVER_MYSQLDATA or DRIVER_MYSQLCONNECTOR must be defined
+#endif
 {
     /// <summary>
     /// Base configuration for MySQL and MariaDB docker images defining everything required for
@@ -18,7 +23,11 @@ namespace DockerRunner.Database.MySql
         /// <inheritdoc />
         public override string ConnectionString(string host, ushort port)
         {
-            var builder = new MySqlConnectionStringBuilder
+#if DRIVER_MYSQLDATA
+            var builder = new global::MySql.Data.MySqlClient.MySqlConnectionStringBuilder
+#elif DRIVER_MYSQLCONNECTOR
+            var builder = new global::MySqlConnector.MySqlConnectionStringBuilder
+#endif
             {
                 Server = host,
                 Port = port,
@@ -30,7 +39,11 @@ namespace DockerRunner.Database.MySql
         }
 
         /// <inheritdoc />
-        public override DbProviderFactory ProviderFactory => MySqlClientFactory.Instance;
+#if DRIVER_MYSQLDATA
+        public override DbProviderFactory ProviderFactory => global::MySql.Data.MySqlClient.MySqlClientFactory.Instance;
+#elif DRIVER_MYSQLCONNECTOR
+        public override DbProviderFactory ProviderFactory => global::MySqlConnector.MySqlConnectorFactory.Instance;
+#endif
 
         /// <inheritdoc />
         public override ushort? Port => 3306;

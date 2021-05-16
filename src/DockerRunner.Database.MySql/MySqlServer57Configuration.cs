@@ -1,4 +1,8 @@
+#if DRIVER_MYSQLDATA
 namespace DockerRunner.Database.MySql
+#elif DRIVER_MYSQLCONNECTOR
+namespace DockerRunner.Database.MySqlConnector
+#endif
 {
     /// <summary>
     /// Configuration for the MySQL Server 5.7 image from https://hub.docker.com/r/mysql/mysql-server
