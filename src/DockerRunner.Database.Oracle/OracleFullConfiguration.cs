@@ -7,5 +7,8 @@ namespace DockerRunner.Database.Oracle
     {
         /// <inheritdoc />
         public override string ImageName => "gvenzl/oracle-xe:full";
+
+        /// <inheritdoc />
+        public override string ServiceName => "XEPDB1";
     }
 }

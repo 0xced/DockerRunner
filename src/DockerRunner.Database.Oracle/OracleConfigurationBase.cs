@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using Oracle.ManagedDataAccess.Client;
 
@@ -19,12 +20,17 @@ namespace DockerRunner.Database.Oracle
         {
             var builder = new OracleConnectionStringBuilder
             {
-                DataSource = $"(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST={host})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME=XE)))",
+                DataSource = $"(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST={host})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME={ServiceName})))",
                 UserID = User,
                 Password = Password,
             };
             return builder.ConnectionString;
         }
+
+        /// <summary>
+        /// The Oracle service name.
+        /// </summary>
+        public abstract string ServiceName { get; }
 
         /// <inheritdoc />
         public override DbProviderFactory ProviderFactory => OracleClientFactory.Instance;
@@ -39,5 +45,8 @@ namespace DockerRunner.Database.Oracle
 
         /// <inheritdoc />
         public override IEnumerable<ushort> ExposePorts => new ushort[] { 1521 };
+
+        /// <inheritdoc />
+        public override TimeSpan Timeout => TimeSpan.FromMinutes(1);
     }
 }
