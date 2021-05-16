@@ -23,7 +23,7 @@ namespace DockerRunner.Tests
             var configuration = new NginxDockerContainerConfiguration(TestsDirectory);
 
             // Act
-            await using var runner = await DockerContainerRunner.StartAsync(configuration, RunningCommand, RanCommand);
+            await using var runner = await DockerContainerRunner.StartAsync(configuration, RunningCommand, RanCommand, waitOnDispose: true);
 
             // Assert
             var endpoints = runner.ContainerInfo.PortMappings.Where(e => e.ContainerPort == 80).Select(e => e.HostEndpoint).ToList();

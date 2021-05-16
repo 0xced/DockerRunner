@@ -24,7 +24,7 @@ namespace DockerRunner.Tests
             var configuration = (DockerDatabaseContainerConfiguration)(Activator.CreateInstance(configurationType) ?? throw new InvalidOperationException($"Activator.CreateInstance({configurationType}) returned null."));
 
             // Act
-            await using var runner = await DockerDatabaseContainerRunner.StartAsync(configuration, RunningCommand, RanCommand);
+            await using var runner = await DockerDatabaseContainerRunner.StartAsync(configuration, RunningCommand, RanCommand, waitOnDispose: true);
 
             // Assert
             runner.ContainerInfo.ContainerId.Should().NotBeNull();
