@@ -58,7 +58,7 @@ namespace DockerRunner
             DockerContainerConfiguration configuration,
             EventHandler<CommandEventArgs>? runningCommand = null,
             EventHandler<RanCommandEventArgs>? ranCommand = null,
-            bool waitOnDispose = false,
+            bool waitOnDispose = true,
             CancellationToken cancellationToken = default)
         {
             var runner = new DockerContainerRunner(configuration, runningCommand, ranCommand, waitOnDispose);

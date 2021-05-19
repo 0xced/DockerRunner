@@ -54,7 +54,7 @@ namespace DockerRunner
             DockerDatabaseContainerConfiguration configuration,
             EventHandler<CommandEventArgs>? runningCommand = null,
             EventHandler<RanCommandEventArgs>? ranCommand = null,
-            bool waitOnDispose = false,
+            bool waitOnDispose = true,
             CancellationToken cancellationToken = default)
         {
             var runner = await DockerContainerRunner.StartAsync(configuration, runningCommand, ranCommand, waitOnDispose, cancellationToken);
