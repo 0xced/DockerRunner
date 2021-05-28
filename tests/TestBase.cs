@@ -1,7 +1,12 @@
 using System;
 using System.IO;
 using System.Reflection;
+using Xunit;
 using Xunit.Abstractions;
+
+// Put all test classes into a single test collection, thus disabling parallel testing
+// See https://xunit.net/docs/running-tests-in-parallel
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)]
 
 namespace DockerRunner.Tests
 {
