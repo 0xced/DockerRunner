@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: matrix.os == 'macos-latest'
         with:
-          path: *.nupkg
+          path: "*.nupkg"
       - name: Retrieve tag message
         if: matrix.os == 'macos-latest'
         run: |
