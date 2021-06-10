@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -40,6 +42,7 @@ namespace DockerRunner
         /// <param name="configuration">The <see cref="DockerDatabaseContainerConfiguration"/> defining how the container must start.</param>
         /// <param name="runningCommand">An optional event handler raised when a command is running.</param>
         /// <param name="ranCommand">An optional event handler raised when a command has successfully finished running.</param>
+        /// <param name="sqlCommandExecuting">An optional event handler raised when a SQL statement is executing.</param>
         /// <param name="waitOnDispose">
         /// If <c>true</c>, waits for the container to be fully stopped when the runner is disposed, in <see cref="DisposeAsync"/>.
         /// Using <c>false</c> is faster but no error will be reported if stopping the container fails.
@@ -54,6 +57,7 @@ namespace DockerRunner
             DockerDatabaseContainerConfiguration configuration,
             EventHandler<CommandEventArgs>? runningCommand = null,
             EventHandler<RanCommandEventArgs>? ranCommand = null,
+            EventHandler<DbCommandEventArgs>? sqlCommandExecuting = null,
             bool waitOnDispose = true,
             CancellationToken cancellationToken = default)
         {
@@ -75,7 +79,9 @@ namespace DockerRunner
                     try
                     {
                         await connection.OpenAsync(cancellationToken);
-                        return new DockerDatabaseContainerRunner(runner, connectionString);
+                        var dockerDatabaseContainerRunner = new DockerDatabaseContainerRunner(runner, connectionString);
+                        await ExecuteSqlStatementsAsync(dockerDatabaseContainerRunner, connection, configuration.SqlStatements, sqlCommandExecuting, cancellationToken);
+                        return dockerDatabaseContainerRunner;
                     }
                     catch (Exception exception)
                     {
@@ -100,6 +106,18 @@ namespace DockerRunner
         public async ValueTask DisposeAsync()
         {
             await _runner.DisposeAsync();
+        }
+
+        private static async Task ExecuteSqlStatementsAsync(DockerDatabaseContainerRunner dockerDatabaseContainerRunner, DbConnection dbConnection, IEnumerable<string> sqlStatements, EventHandler<DbCommandEventArgs>? sqlExecuting, CancellationToken cancellationToken)
+        {
+            foreach (var sqlStatement in sqlStatements)
+            {
+                var command = dbConnection.CreateCommand();
+                command.CommandText = sqlStatement;
+                command.CommandType = CommandType.Text;
+                sqlExecuting?.Invoke(dockerDatabaseContainerRunner, new DbCommandEventArgs(command));
+                await command.ExecuteNonQueryAsync(cancellationToken);
+            }
         }
 
         private static IPEndPoint GetHostEndpoint(IReadOnlyCollection<PortMapping> portMappings, DockerDatabaseContainerConfiguration configuration)

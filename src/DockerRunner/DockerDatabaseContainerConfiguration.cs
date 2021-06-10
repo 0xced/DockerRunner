@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 
 namespace DockerRunner
 {
@@ -17,6 +19,15 @@ namespace DockerRunner
         /// The provider factory used for connecting to the database.
         /// </summary>
         public abstract DbProviderFactory ProviderFactory { get; }
+
+        /// <summary>
+        /// A collection of SQL statements to execute upon successfully connecting to the database.
+        /// <para>
+        /// May be used to populate data in docker containers that don't support database creation on startup such
+        /// as the official SQL Server docker image. See https://github.com/microsoft/mssql-docker/issues/2
+        /// </para>
+        /// </summary>
+        public virtual IEnumerable<string> SqlStatements { get; } = Enumerable.Empty<string>();
 
         /// <summary>
         /// The exposed database port by the docker container. See the documentation of the docker image for exposed ports.
