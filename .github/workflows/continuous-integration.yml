@@ -10,10 +10,7 @@ env:
 
 jobs:
   package:
-    strategy:
-      matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
     name: Run tests and create NuGet package
     outputs:
       version: ${{ steps.dotnet-pack.outputs.version }}
@@ -33,16 +30,19 @@ jobs:
         run: dotnet restore --verbosity normal
       - name: Build solution
         run: dotnet build --verbosity normal
+      - name: Setup Docker
+        uses: docker-practice/actions-setup-docker@v1
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
       - name: Create NuGet package
         run: dotnet pack --output . --no-build --verbosity normal
         id: dotnet-pack
       - name: Upload NuGet package artifact
         uses: actions/upload-artifact@v2
-        if: matrix.os == 'macos-latest'
         with:
+          name: NuGet packages
           path: "*.nupkg"
       - name: Retrieve tag message
-        if: matrix.os == 'macos-latest'
         run: |
           git fetch --tags --force
           RELEASE_NOTES=$(git tag --list ${{ steps.dotnet-pack.outputs.version }} --format='%(contents)')
