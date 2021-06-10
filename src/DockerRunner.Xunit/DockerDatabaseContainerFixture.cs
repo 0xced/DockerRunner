@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -30,7 +31,7 @@ namespace DockerRunner.Xunit
 
         async Task IAsyncLifetime.InitializeAsync()
         {
-            _runner = await DockerDatabaseContainerRunner.StartAsync(Configuration, RunningCommand, RanCommand);
+            _runner = await DockerDatabaseContainerRunner.StartAsync(Configuration, RunningCommand, RanCommand, SqlCommandExecuting);
         }
 
         /// <inheritdoc />
@@ -48,6 +49,16 @@ namespace DockerRunner.Xunit
             {
                 await _runner.DisposeAsync();
             }
+        }
+
+        /// <summary>
+        /// Called before a <see cref="DbCommand" /> is run as part of <see cref="DockerDatabaseContainerRunner"/> startup.
+        /// </summary>
+        /// <param name="sender">The <see cref="DockerDatabaseContainerRunner"/> instance executing the db command.</param>
+        /// <param name="e">The <see cref="DbCommandEventArgs"/> holding the db command.</param>
+        protected void SqlCommandExecuting(object? sender, DbCommandEventArgs e)
+        {
+            MessageSink.OnMessage(new PrintableDiagnosticMessage($"Executing DbCommand ({e.DbCommand.CommandType}){Environment.NewLine}{e.DbCommand.CommandText}"));
         }
     }
 }

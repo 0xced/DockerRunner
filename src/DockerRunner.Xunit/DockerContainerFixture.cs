@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace DockerRunner.Xunit
 {
@@ -12,7 +11,11 @@ namespace DockerRunner.Xunit
     /// <typeparam name="TConfiguration">The <see cref="DockerContainerConfiguration"/> subclass that configures how the docker container is run.</typeparam>
     public class DockerContainerFixture<TConfiguration> : IAsyncLifetime where TConfiguration : DockerContainerConfiguration, new()
     {
-        private readonly IMessageSink _messageSink;
+        /// <summary>
+        /// The <see cref="IMessageSink"/> used to write diagnostic messages, e.g. docker commands.
+        /// </summary>
+        protected readonly IMessageSink MessageSink;
+
         private DockerContainerRunner? _runner;
 
         /// <summary>
@@ -21,8 +24,8 @@ namespace DockerRunner.Xunit
         /// <param name="messageSink">The <see cref="IMessageSink"/> for writing diagnostics message, i.e. underlying docker commands.</param>
         public DockerContainerFixture(IMessageSink messageSink)
         {
+            MessageSink = messageSink ?? throw new ArgumentNullException(nameof(messageSink));
             Configuration = new TConfiguration();
-            _messageSink = messageSink ?? throw new ArgumentNullException(nameof(messageSink));
         }
 
         /// <summary>
@@ -56,7 +59,7 @@ namespace DockerRunner.Xunit
         /// <param name="e">The <see cref="CommandEventArgs"/> describing the command.</param>
         protected void RunningCommand(object? sender, CommandEventArgs e)
         {
-            _messageSink.OnMessage(new PrintableDiagnosticMessage($"> {e.Command} {e.Arguments}"));
+            MessageSink.OnMessage(new PrintableDiagnosticMessage($"> {e.Command} {e.Arguments}"));
         }
 
         /// <summary>
@@ -66,17 +69,7 @@ namespace DockerRunner.Xunit
         /// <param name="e">The <see cref="CommandEventArgs"/> describing the command.</param>
         protected void RanCommand(object? sender, RanCommandEventArgs e)
         {
-            _messageSink.OnMessage(new PrintableDiagnosticMessage($">> {e.Command} {e.Arguments}{Environment.NewLine}{e.Output}"));
-        }
-
-        /// <remarks>See https://github.com/xunit/xunit/pull/2148#issuecomment-839838421</remarks>
-        private class PrintableDiagnosticMessage : DiagnosticMessage
-        {
-            public PrintableDiagnosticMessage(string message) : base(message)
-            {
-            }
-
-            public override string ToString() => Message;
+            MessageSink.OnMessage(new PrintableDiagnosticMessage($">> {e.Command} {e.Arguments}{Environment.NewLine}{e.Output}"));
         }
     }
 }
