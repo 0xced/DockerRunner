@@ -49,7 +49,8 @@ namespace DockerRunner.Tests
             // -------- System.Security.Authentication.AuthenticationException : Authentication failed, see inner exception.
             // ------------ Interop+OpenSsl+SslException : SSL Handshake failed with OpenSSL error - SSL_ERROR_SSL.
             // ---------------- Interop+Crypto+OpenSslCryptographicException : error:14094410:SSL routines:ssl3_read_bytes:sslv3 alert handshake failure
-            Skip.If(isRunningOnGitHubActions && configuration is Database.MySqlConnector.MySqlServer57Configuration, "MySQL Server 5.7 (MySqlConnector) test would fail when running on GitHub Actions.");
+            var isMySqlServer57 = configuration is Database.MySqlConnector.MySqlServer57Configuration || configuration is Database.MySql.MySqlServer57Configuration;
+            Skip.If(isRunningOnGitHubActions && isMySqlServer57, "MySQL Server 5.7 test would fail when running on GitHub Actions.");
 
             return configuration;
         }
