@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Common;
 
 #if DRIVER_MYSQLDATA
@@ -48,9 +47,6 @@ namespace DockerRunner.Database.MySqlConnector
 
         /// <inheritdoc />
         public override ushort? Port => 3306;
-
-        /// <inheritdoc />
-        public override TimeSpan Timeout => TimeSpan.FromMinutes(1);
 
         /// <inheritdoc />
         public override IReadOnlyDictionary<string, string> EnvironmentVariables => new Dictionary<string, string>
