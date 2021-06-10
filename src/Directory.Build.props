@@ -23,6 +23,14 @@
 
   <PropertyGroup Label="MinVer">
     <MinVerMinimumMajorMinor>0.9</MinVerMinimumMajorMinor>
+    <MinVerTagPrefix>$(MSBuildProjectName)/</MinVerTagPrefix>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Restoring">
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- https://devblogs.microsoft.com/nuget/enable-repeatable-package-restores-using-a-lock-file/#how-does-nuget-use-the-lock-file -->
+    <RestoreLockedMode Condition="$(ContinuousIntegrationBuild) == 'true'">true</RestoreLockedMode>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,5 +46,10 @@
     <PackageReference Include="MinVer" Version="2.5.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
   </ItemGroup>
+
+  <Target Name="PrintPackageVersionForGitHubActions" AfterTargets="Pack">
+    <Message Importance="high" Text="::set-output name=version::$(PackageVersion)" />
+    <Message Importance="high" Text="::set-output name=nupkg-filename::$(PackageId).$(PackageVersion).nupkg" />
+  </Target>
 
 </Project>
