@@ -19,7 +19,7 @@ namespace DockerRunner.Tests
         public async Task ReadFileFromNginx()
         {
             // Arrange
-            var httpClient = new HttpClient();
+            var httpClient = new HttpClient(new HttpClientHandler { UseProxy = false });
             var configuration = new NginxDockerContainerConfiguration(TestsDirectory);
 
             // Act
