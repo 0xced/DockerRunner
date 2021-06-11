@@ -10,11 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DockerRunner\DockerRunner.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <!-- Version 3.1.0 is the first version to support .NET Standard -->
+    <PackageReference Include="DockerRunner" Version="1.0.0-beta.1" />
     <PackageReference Include="Npgsql" Version="3.1.0" />
   </ItemGroup>
 

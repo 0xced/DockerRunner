@@ -2,6 +2,15 @@
   "version": 1,
   "dependencies": {
     ".NETStandard,Version=v2.0": {
+      "DockerRunner": {
+        "type": "Direct",
+        "requested": "[1.0.0-beta.1, )",
+        "resolved": "1.0.0-beta.1",
+        "contentHash": "eeFaXuYogGvbu9UDqW1w9YiA+P/Z+NB0j+eAvZYj4KLMn0K5DqNHAjoERGAFKAiDviyKAKL0wrEjuBHXsu18lw==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "5.0.0"
+        }
+      },
       "Microsoft.NETFramework.ReferenceAssemblies": {
         "type": "Direct",
         "requested": "[1.0.2, )",
@@ -819,12 +828,6 @@
         "contentHash": "AA9O27bBDE+sNy3PsN3RLoHaQzK7OldejkpXoi3UAeVcR+8Yr4O0UmcdCkucE4KfGk/ID+BxHCWdws4FEDV+4w==",
         "dependencies": {
           "System.Runtime": "4.1.0-rc2-24027"
-        }
-      },
-      "dockerrunner": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "5.0.0"
         }
       }
     }
