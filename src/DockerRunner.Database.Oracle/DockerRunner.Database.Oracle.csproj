@@ -10,10 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DockerRunner\DockerRunner.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="DockerRunner" Version="1.0.0-beta.1" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.18.3" />
   </ItemGroup>
 
