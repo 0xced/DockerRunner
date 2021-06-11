@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - nanme: Get git tag name
+      - name: Get git tag name
         uses: olegtarasov/get-tag@v2.1
         id: git-tag-name
         with:
