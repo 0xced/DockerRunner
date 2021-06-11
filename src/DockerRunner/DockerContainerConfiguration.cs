@@ -43,7 +43,7 @@ namespace DockerRunner
         public virtual IEnumerable<DockerStorage> Storage { get; } = Enumerable.Empty<DockerStorage>();
 
         /// <summary>
-        /// Ports to expose when starting the docker container. Useful for images that don't specify an EXPOSE directive in their Dockerfile.
+        /// Ports to expose when starting the docker container. Useful for images that don't specify an EXPOSE instruction in their Dockerfile.
         /// <para>See https://maximorlov.com/exposing-a-port-in-docker-what-does-it-do/ for a good explanation of exposing ports.</para>
         /// </summary>
         public virtual IEnumerable<ushort> ExposePorts { get; } = Enumerable.Empty<ushort>();
