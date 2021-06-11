@@ -75,8 +75,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.package.outputs.version }}
-          release_name: Version ${{ needs.package.outputs.version }}
+          tag_name: ${{ needs.package.outputs.project-name }}/${{ needs.package.outputs.version }}
+          release_name: ${{ needs.package.outputs.project-name }} ${{ needs.package.outputs.version }}
           body: ${{ needs.package.outputs.release-body }}
           draft: false
           prerelease: ${{ contains(needs.package.outputs.version, '-') }}
