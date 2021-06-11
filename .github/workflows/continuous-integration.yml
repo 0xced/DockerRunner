@@ -41,7 +41,6 @@ jobs:
       - name: Setup Docker
         uses: docker-practice/actions-setup-docker@v1
       - name: Run tests
-        if: false
         run: dotnet test --no-build --verbosity normal
       - name: Create NuGet package
         if: startsWith(github.ref, 'refs/tags/')
@@ -83,5 +82,4 @@ jobs:
           draft: false
           prerelease: ${{ contains(needs.package.outputs.version, '-') }}
       - name: Publish NuGet package on nuget.org
-        if: false
         run: dotnet nuget push ${{ needs.package.outputs.nupkg-filename }} --source https://api.nuget.org/v3/index.json --api-key "${{ secrets.NUGET_API_KEY }}"
