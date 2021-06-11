@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Run tests and create NuGet package
     outputs:
+      project-name: ${{ steps.git-tag-name.outputs.projectName }}
       version: ${{ steps.dotnet-pack.outputs.version }}
       nupkg-filename: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
       release-body: ${{ steps.tag-message.outputs.release-notes }}
@@ -21,6 +22,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - nanme: Get git tag name
+        uses: olegtarasov/get-tag@v2.1
+        id: git-tag-name
+        with:
+          tagRegex: "(?<projectName>.+)/(?<projectVersion>.+)" 
       - name: Retrieve cached NuGet packages
         uses: actions/cache@v2
         with:
@@ -35,13 +41,16 @@ jobs:
       - name: Run tests
         run: dotnet test --no-build --verbosity normal
       - name: Create NuGet package
-        run: dotnet pack --output . --no-build --verbosity normal
+        if: startsWith(github.ref, 'refs/tags/')
+        run: dotnet pack src/${{ steps.git-tag-name.outputs.projectName }}/${{ steps.git-tag-name.outputs.projectName }}.csproj --output . --no-build --verbosity normal
+        working-directory: src/${{ steps.git-tag-name.outputs.projectName }}
         id: dotnet-pack
       - name: Upload NuGet package artifact
+        if: startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v2
         with:
-          name: NuGet packages
-          path: "*.nupkg"
+          name: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
+          path: ${{ steps.dotnet-pack.outputs.nupkg-filename }}
       - name: Retrieve tag message
         run: |
           git fetch --tags --force
