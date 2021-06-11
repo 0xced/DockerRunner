@@ -43,7 +43,6 @@ jobs:
       - name: Create NuGet package
         if: startsWith(github.ref, 'refs/tags/')
         run: dotnet pack src/${{ steps.git-tag-name.outputs.projectName }}/${{ steps.git-tag-name.outputs.projectName }}.csproj --output . --no-build --verbosity normal
-        working-directory: src/${{ steps.git-tag-name.outputs.projectName }}
         id: dotnet-pack
       - name: Upload NuGet package artifact
         if: startsWith(github.ref, 'refs/tags/')
