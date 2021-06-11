@@ -2,6 +2,15 @@
   "version": 1,
   "dependencies": {
     ".NETStandard,Version=v2.0": {
+      "DockerRunner": {
+        "type": "Direct",
+        "requested": "[1.0.0-beta.1, )",
+        "resolved": "1.0.0-beta.1",
+        "contentHash": "eeFaXuYogGvbu9UDqW1w9YiA+P/Z+NB0j+eAvZYj4KLMn0K5DqNHAjoERGAFKAiDviyKAKL0wrEjuBHXsu18lw==",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "5.0.0"
+        }
+      },
       "Microsoft.Data.SqlClient": {
         "type": "Direct",
         "requested": "[1.1.0, )",
@@ -1082,12 +1091,6 @@
           "System.Threading": "4.3.0",
           "System.Xml.ReaderWriter": "4.3.0",
           "System.Xml.XmlDocument": "4.3.0"
-        }
-      },
-      "dockerrunner": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "5.0.0"
         }
       }
     }
