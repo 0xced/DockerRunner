@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using Oracle.ManagedDataAccess.Client;
 
 namespace DockerRunner.Database.Oracle
 {
@@ -17,23 +16,39 @@ namespace DockerRunner.Database.Oracle
 
         /// <inheritdoc />
         public override string ConnectionString(string host, ushort port)
-        {
-            var builder = new OracleConnectionStringBuilder
-            {
-                DataSource = $"(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST={host})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME={ServiceName})))",
-                UserID = User,
-                Password = Password,
-            };
-            return builder.ConnectionString;
-        }
+            => $"USER ID={User};PASSWORD={Password};DATA SOURCE=(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST={host})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME={ServiceName})))";
 
         /// <summary>
         /// The Oracle service name.
         /// </summary>
         public abstract string ServiceName { get; }
 
-        /// <inheritdoc />
-        public override DbProviderFactory ProviderFactory => OracleClientFactory.Instance;
+        /// <summary>
+        /// The provider factory used for connecting to the database.
+        /// </summary>
+        /// <remarks>
+        /// Searches the <c>OracleClientFactory</c> instance through reflection in order to let the consumer decides
+        /// which implementation to use. Supported implementations are from <c>Oracle.ManagedDataAccess.Core</c> (.NET Core) and <c>Oracle.ManagedDataAccess</c> (.NET Framework)
+        /// packages.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">Neither <c>Oracle.ManagedDataAccess.Core</c> nor <c>Oracle.ManagedDataAccess</c> is referenced.</exception>
+        public override DbProviderFactory ProviderFactory
+        {
+            get
+            {
+                // Can be from either https://www.nuget.org/packages/Oracle.ManagedDataAccess.Core/ or https://www.nuget.org/packages/Oracle.ManagedDataAccess/
+                var oracleClientFactoryType = Type.GetType("Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess", throwOnError: false);
+                var instance = oracleClientFactoryType?.GetField("Instance")?.GetValue(null);
+                if (instance != null)
+                {
+                    return (DbProviderFactory)instance;
+                }
+
+                const string message = "Make sure to add a package reference to either \"Oracle.ManagedDataAccess.Core\" or \"Oracle.ManagedDataAccess\" in your project. " +
+                                       "Oracle.ManagedDataAccess.Client.OracleClientFactory.Instance was not found through reflection.";
+                throw new InvalidOperationException(message);
+            }
+        }
 
         /// <inheritdoc />
         public override IReadOnlyDictionary<string, string> EnvironmentVariables => new Dictionary<string, string>

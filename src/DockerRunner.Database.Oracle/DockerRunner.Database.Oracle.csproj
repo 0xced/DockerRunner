@@ -5,13 +5,12 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Publishing">
-    <Description>Provides Oracle database configurations for DockerRunner using the Oracle.ManagedDataAccess.Core ADO.NET driver</Description>
+    <Description>Provides Oracle database configurations for DockerRunner using either the Oracle.ManagedDataAccess.Core or the Oracle.ManagedDataAccess ADO.NET driver</Description>
     <PackageTags>Docker Container Database Oracle</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DockerRunner" Version="1.0.0-beta.1" />
-    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="2.18.3" />
   </ItemGroup>
 
 </Project>

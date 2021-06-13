@@ -48,12 +48,6 @@
           "Microsoft.NETCore.Platforms": "1.1.0"
         }
       },
-      "Oracle.ManagedDataAccess.Core": {
-        "type": "Direct",
-        "requested": "[2.18.3, )",
-        "resolved": "2.18.3",
-        "contentHash": "YaN+rm9wgFQAuWxrrR7lUxEQI4WJnNkMTlZb+gbv2W4D/ML2kkgz4N8Z76W9Polx6BU+kK3Vx2R8RD9u7sea7g=="
-      },
       "Microsoft.Bcl.AsyncInterfaces": {
         "type": "Transitive",
         "resolved": "5.0.0",
