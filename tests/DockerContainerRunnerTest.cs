@@ -35,7 +35,7 @@ namespace DockerRunner.Tests
                 var result = await httpClient.GetAsync(url);
                 result.StatusCode.Should().Be(HttpStatusCode.OK);
                 var thisFileFromNginx = await result.Content.ReadAsStringAsync();
-                var thisFileFromDisk = await File.ReadAllTextAsync(Path.Combine(TestsDirectory.FullName, "DockerContainerRunnerTest.cs"));
+                var thisFileFromDisk = File.ReadAllText(Path.Combine(TestsDirectory.FullName, "DockerContainerRunnerTest.cs"));
                 thisFileFromNginx.Should().Be(thisFileFromDisk);
             }
         }
