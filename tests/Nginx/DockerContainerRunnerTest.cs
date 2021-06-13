@@ -7,7 +7,7 @@ using FluentAssertions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DockerRunner.Tests
+namespace DockerRunner.Tests.Nginx
 {
     public class DockerContainerRunnerTest : TestBase
     {

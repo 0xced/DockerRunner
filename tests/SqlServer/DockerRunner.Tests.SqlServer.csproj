@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;net5.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Base\DockerRunner.Tests.csproj" />
+    <ProjectReference Include="..\..\src\DockerRunner.Database.SqlServer\DockerRunner.Database.SqlServer.csproj" />
+  </ItemGroup>
+
+</Project>

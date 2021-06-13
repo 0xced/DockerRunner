@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;net5.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Net.Http" Condition="$(TargetFrameworkIdentifier) == '.NETFramework'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Base\DockerRunner.Tests.csproj" />
+  </ItemGroup>
+
+</Project>

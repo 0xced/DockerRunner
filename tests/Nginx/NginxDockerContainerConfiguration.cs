@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace DockerRunner.Tests
+namespace DockerRunner.Tests.Nginx
 {
     internal class NginxDockerContainerConfiguration : DockerContainerConfiguration
     {

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;net5.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.25" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Base\DockerRunner.Tests.csproj" />
+    <ProjectReference Include="..\..\src\DockerRunner.Database.MySql\DockerRunner.Database.MySql.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;net5.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup >
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="19.11.0" Condition="$(TargetFrameworkIdentifier) == '.NETFramework'" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.1" Condition="$(TargetFrameworkIdentifier) != '.NETFramework'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Base\DockerRunner.Tests.csproj" />
+    <ProjectReference Include="..\..\src\DockerRunner.Database.Oracle\DockerRunner.Database.Oracle.csproj" />
+  </ItemGroup>
+
+</Project>

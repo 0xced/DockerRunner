@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net472;net5.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" Version="5.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Base\DockerRunner.Tests.csproj" />
+    <ProjectReference Include="..\..\src\DockerRunner.Database.Npgsql\DockerRunner.Database.Npgsql.csproj" />
+  </ItemGroup>
+
+</Project>
