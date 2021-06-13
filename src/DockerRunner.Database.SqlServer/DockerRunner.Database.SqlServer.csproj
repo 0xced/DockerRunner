@@ -5,13 +5,12 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Publishing">
-    <Description>Provides Microsoft SQL Server database configurations for DockerRunner using the Microsoft.Data.SqlClient ADO.NET driver</Description>
+    <Description>Provides Microsoft SQL Server database configurations for DockerRunner using either the Microsoft.Data.SqlClient or the System.Data.SqlClient ADO.NET driver</Description>
     <PackageTags>Docker Container Database MSSQL SQLServer</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DockerRunner" Version="1.0.0-beta.1" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.0" />
   </ItemGroup>
 
 </Project>
