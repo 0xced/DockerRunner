@@ -6,14 +6,12 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Publishing">
-    <Description>Provides MySql and MariaDB database configurations for DockerRunner using the MySql.Data ADO.NET driver</Description>
+    <Description>Provides MySql and MariaDB database configurations for DockerRunner using either the MySql.Data or the MySqlConnector ADO.NET driver</Description>
     <PackageTags>Docker Container Database MySql MariaDB</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Version 6.10.7 is the first version to support .NET Standard -->
     <PackageReference Include="DockerRunner" Version="1.0.0-beta.1" />
-    <PackageReference Include="MySql.Data" Version="6.10.7" />
   </ItemGroup>
 
 </Project>

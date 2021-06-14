@@ -1,13 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 
-#if DRIVER_MYSQLDATA
 namespace DockerRunner.Database.MySql
-#elif DRIVER_MYSQLCONNECTOR
-namespace DockerRunner.Database.MySqlConnector
-#else
-#error Either DRIVER_MYSQLDATA or DRIVER_MYSQLCONNECTOR must be defined
-#endif
 {
     /// <summary>
     /// Base configuration for MySQL and MariaDB docker images defining everything required for
@@ -22,28 +18,46 @@ namespace DockerRunner.Database.MySqlConnector
 
         /// <inheritdoc />
         public override string ConnectionString(string host, ushort port)
-        {
-#if DRIVER_MYSQLDATA
-            var builder = new global::MySql.Data.MySqlClient.MySqlConnectionStringBuilder
-#elif DRIVER_MYSQLCONNECTOR
-            var builder = new global::MySqlConnector.MySqlConnectionStringBuilder
-#endif
-            {
-                Server = host,
-                Port = port,
-                Database = Database,
-                UserID = User,
-                Password = Password,
-            };
-            return builder.ConnectionString;
-        }
+            => $"server={host};port={port};database={Database};user id={User};password={Password}";
 
-        /// <inheritdoc />
-#if DRIVER_MYSQLDATA
-        public override DbProviderFactory ProviderFactory => global::MySql.Data.MySqlClient.MySqlClientFactory.Instance;
-#elif DRIVER_MYSQLCONNECTOR
-        public override DbProviderFactory ProviderFactory => global::MySqlConnector.MySqlConnectorFactory.Instance;
-#endif
+        private static readonly IEnumerable<string> MySqlClientFactoryTypeNames = new[]
+        {
+            // From https://www.nuget.org/packages/MySql.Data/
+            "MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data",
+            // From https://www.nuget.org/packages/MySqlConnector/ < 1.0.0
+            "MySql.Data.MySqlClient.MySqlClientFactory, MySqlConnector",
+            // From https://www.nuget.org/packages/MySqlConnector/ >= 1.0.0
+            "MySqlConnector.MySqlConnectorFactory, MySqlConnector",
+        };
+
+        /// <summary>
+        /// The provider factory used for connecting to the database.
+        /// </summary>
+        /// <remarks>
+        /// Searches the <c>MySqlClientFactory</c> or <c>MySqlConnectorFactory</c> instance through reflection in order to let the consumer decides
+        /// which implementation to use. Supported implementations are from <c>MySql.Data</c> and <c>MySqlConnector</c> packages.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">Neither <c>MySql.Data</c> nor <c>MySqlConnector</c> is referenced.</exception>
+        public override DbProviderFactory ProviderFactory
+        {
+            get
+            {
+                foreach (var mySqlClientFactoryTypeName in MySqlClientFactoryTypeNames)
+                {
+                    var mySqlClientFactoryType = Type.GetType(mySqlClientFactoryTypeName, throwOnError: false);
+                    var instance = mySqlClientFactoryType?.GetField("Instance")?.GetValue(null);
+                    if (instance != null)
+                    {
+                        return (DbProviderFactory)instance;
+                    }
+                }
+
+                var message = $@"Make sure to add a package reference to either ""MySql.Data"" or ""MySqlConnector"" in your project.
+The following types were tried to get the `MySqlClientFactory.Instance` through reflection but none were found:
+{string.Join(Environment.NewLine, MySqlClientFactoryTypeNames.Select(e => $"  * {e}"))}";
+                throw new InvalidOperationException(message);
+            }
+        }
 
         /// <inheritdoc />
         public override ushort? Port => 3306;
