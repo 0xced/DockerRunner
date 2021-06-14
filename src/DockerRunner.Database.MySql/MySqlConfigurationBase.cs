@@ -53,7 +53,7 @@ namespace DockerRunner.Database.MySql
                 }
 
                 var message = $@"Make sure to add a package reference to either ""MySql.Data"" or ""MySqlConnector"" in your project.
-The following types were tried to get the `MySqlClientFactory.Instance` through reflection but none were found:
+The following types were tried to get the `MySqlClientFactory.Instance` or `MySqlConnectorFactory.Instance` through reflection but none were found:
 {string.Join(Environment.NewLine, MySqlClientFactoryTypeNames.Select(e => $"  * {e}"))}";
                 throw new InvalidOperationException(message);
             }
