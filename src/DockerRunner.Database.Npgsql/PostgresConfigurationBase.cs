@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
-using Npgsql;
 
 namespace DockerRunner.Database.Npgsql
 {
@@ -17,20 +17,17 @@ namespace DockerRunner.Database.Npgsql
 
         /// <inheritdoc />
         public override string ConnectionString(string host, ushort port)
+            => $"Host={host};Port={port};Database={Database};Username={User};Password={Password}";
+
+        private static readonly ProviderFactoryDescriptor[] PostgresDbProviderFactoryDescriptors =
         {
-            var builder = new NpgsqlConnectionStringBuilder
-            {
-                Host = host,
-                Port = port,
-                Database = Database,
-                Username = User,
-                Password = Password,
-            };
-            return builder.ConnectionString;
-        }
+            new ProviderFactoryDescriptor("Npgsql.NpgsqlFactory", "Npgsql", "Npgsql"),
+        };
+
+        private readonly Lazy<DbProviderFactory> _providerFactory = new Lazy<DbProviderFactory>(() => DbProviderFactoryReflection.GetProviderFactory(PostgresDbProviderFactoryDescriptors));
 
         /// <inheritdoc />
-        public override DbProviderFactory ProviderFactory => NpgsqlFactory.Instance;
+        public override DbProviderFactory ProviderFactory => _providerFactory.Value;
 
         /// <inheritdoc />
         public override IReadOnlyDictionary<string, string> EnvironmentVariables => new Dictionary<string, string>

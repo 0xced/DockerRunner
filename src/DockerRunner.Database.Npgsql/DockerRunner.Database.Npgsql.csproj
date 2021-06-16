@@ -10,9 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\DockerRunner.Database\DbProviderFactoryReflection.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DockerRunner" Version="1.0.0-beta.1" />
-    <!-- Version 3.1.0 is the first version to support .NET Standard -->
-    <PackageReference Include="Npgsql" Version="3.1.0" />
   </ItemGroup>
 
 </Project>

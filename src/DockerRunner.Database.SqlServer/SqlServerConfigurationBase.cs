@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 
 namespace DockerRunner.Database.SqlServer
 {
@@ -19,15 +18,15 @@ namespace DockerRunner.Database.SqlServer
         /// <inheritdoc />
         public override string ConnectionString(string host, ushort port) => $"Data Source={host},{port};User ID={User};Password={Password}";
 
-        private static readonly IEnumerable<string> SqlClientFactoryTypeNames = new[]
+        private static readonly ProviderFactoryDescriptor[] SqlServerDbProviderFactoryDescriptors =
         {
-            // From https://www.nuget.org/packages/Microsoft.Data.SqlClient/
-            "Microsoft.Data.SqlClient.SqlClientFactory, Microsoft.Data.SqlClient",
-            // From https://www.nuget.org/packages/System.Data.SqlClient/
-            "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient",
-            // From the .NET Framework GAC
-            "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+            new ProviderFactoryDescriptor("Microsoft.Data.SqlClient.SqlClientFactory", "Microsoft.Data.SqlClient", "Microsoft.Data.SqlClient"),
+            new ProviderFactoryDescriptor("System.Data.SqlClient.SqlClientFactory", "System.Data.SqlClient", "System.Data.SqlClient"),
+            // Available in the .NET Framework GAC, requires Version + Culture + PublicKeyToken to be explicitly specified
+            new ProviderFactoryDescriptor("System.Data.SqlClient.SqlClientFactory", "System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", null),
         };
+
+        private readonly Lazy<DbProviderFactory> _providerFactory = new Lazy<DbProviderFactory>(() => DbProviderFactoryReflection.GetProviderFactory(SqlServerDbProviderFactoryDescriptors));
 
         /// <summary>
         /// The provider factory used for connecting to the database.
@@ -37,27 +36,8 @@ namespace DockerRunner.Database.SqlServer
         /// which implementation to use. Supported implementations are from <c>Microsoft.Data.SqlClient</c> and <c>System.Data.SqlClient</c>
         /// packages or the built-in one from <c>System.Data</c> (.NET Framework only).
         /// </remarks>
-        /// <exception cref="InvalidOperationException">Neither <c>Microsoft.Data.SqlClient</c> nor <c>System.Data.SqlClient</c> is referenced.</exception>
-        public override DbProviderFactory ProviderFactory
-        {
-            get
-            {
-                foreach (var sqlClientFactoryTypeName in SqlClientFactoryTypeNames)
-                {
-                    var sqlClientFactoryType = Type.GetType(sqlClientFactoryTypeName, throwOnError: false);
-                    var instance = sqlClientFactoryType?.GetField("Instance")?.GetValue(null);
-                    if (instance != null)
-                    {
-                        return (DbProviderFactory)instance;
-                    }
-                }
-
-                var message = $@"Make sure to add a package reference to either ""Microsoft.Data.SqlClient"" or ""System.Data.SqlClient"" in your project.
-The following types were tried to get the `SqlClientFactory.Instance` through reflection but none were found:
-{string.Join(Environment.NewLine, SqlClientFactoryTypeNames.Select(e => $"  * {e}"))}";
-                throw new InvalidOperationException(message);
-            }
-        }
+        /// <exception cref="MissingAssemblyException">Neither <c>Microsoft.Data.SqlClient</c> nor <c>System.Data.SqlClient</c> is referenced.</exception>
+        public override DbProviderFactory ProviderFactory => _providerFactory.Value;
 
         /// <inheritdoc />
         public override IReadOnlyDictionary<string, string> EnvironmentVariables => new Dictionary<string, string>
