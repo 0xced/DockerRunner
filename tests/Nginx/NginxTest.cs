@@ -36,7 +36,7 @@ namespace DockerRunner.Tests.Nginx
             {
                 TestOutputHelper.WriteLine($"GET {url}");
                 var result = await httpClient.GetAsync(url);
-                result.StatusCode.Should().Be(HttpStatusCode.OK);
+                result.StatusCode.Should().Be(HttpStatusCode.OK, because: $"{url} should be successfully served by nginx");
                 var thisFileFromNginx = await result.Content.ReadAsStringAsync();
                 var thisFileFromDisk = File.ReadAllText(Path.Combine(TestsDirectory.FullName, "NginxTest.cs"));
                 thisFileFromNginx.Should().Be(thisFileFromDisk);
