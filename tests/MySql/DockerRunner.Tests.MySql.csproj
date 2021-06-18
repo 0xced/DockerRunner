@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Base\DockerRunner.Tests.csproj" />
-    <ProjectReference Include="..\..\src\DockerRunner.Database.MySql\DockerRunner.Database.MySql.csproj" />
   </ItemGroup>
 
 </Project>

@@ -10,11 +10,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Base\DockerRunner.Tests.csproj" />
-    <ProjectReference Include="..\..\src\DockerRunner.Database.MySql\DockerRunner.Database.MySql.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\MySql\DockerDatabaseContainerRunnerTest.MySql.cs" />
+    <Compile Include="..\MySql\MariaDbTest.cs" />
+    <Compile Include="..\MySql\MySqlTest.cs" />
   </ItemGroup>
 
 </Project>

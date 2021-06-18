@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Base\DockerRunner.Tests.csproj" />
-    <ProjectReference Include="..\..\src\DockerRunner.Database.SqlServer\DockerRunner.Database.SqlServer.csproj" />
   </ItemGroup>
 
 </Project>
