@@ -10,6 +10,9 @@ ProjectSection(SolutionItems) = preProject
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{880B0709-B8B7-4B39-B3B9-A541D6F7D789}"
+ProjectSection(SolutionItems) = preProject
+	tests\Directory.Build.props = tests\Directory.Build.props
+EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DockerRunner.Tests", "tests\Base\DockerRunner.Tests.csproj", "{4FE85050-0EB3-4CE8-BA32-5367E0CB3785}"
 EndProject
