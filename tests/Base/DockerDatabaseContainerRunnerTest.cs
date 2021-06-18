@@ -14,11 +14,7 @@ namespace DockerRunner.Tests
         [SkippableFact]
         public async Task StartDockerDatabaseContainer()
         {
-            var isRunningOnMono = Type.GetType("Mono.Runtime") != null;
-            Skip.If(isRunningOnMono && SkipOnMono, "Test would fail when running on Mono.");
-
-            var isRunningOnGitHubActions = bool.TryParse(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), out var result) && result;
-            Skip.If(isRunningOnGitHubActions && SkipOnGitHubActions, "Test would fail when running on GitHub Actions.");
+            SkipIfNeeded();
 
             // Arrange
             var configuration = new TConfiguration();
@@ -37,9 +33,5 @@ namespace DockerRunner.Tests
                 TestOutputHelper.WriteLine($"  PortMapping: {portMapping.HostEndpoint} -> {portMapping.ContainerPort}");
             }
         }
-
-        protected virtual bool SkipOnMono => false;
-
-        protected virtual bool SkipOnGitHubActions => false;
     }
 }

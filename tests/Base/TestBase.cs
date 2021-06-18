@@ -27,6 +27,19 @@ namespace DockerRunner.Tests
             TestOutputHelper = testOutputHelper ?? throw new ArgumentNullException(nameof(testOutputHelper));
         }
 
+        protected void SkipIfNeeded()
+        {
+            var isRunningOnMono = Type.GetType("Mono.Runtime") != null;
+            Skip.If(isRunningOnMono && SkipOnMono, "Test would fail when running on Mono.");
+
+            var isRunningOnGitHubActions = bool.TryParse(Environment.GetEnvironmentVariable("GITHUB_ACTIONS"), out var result) && result;
+            Skip.If(isRunningOnGitHubActions && SkipOnGitHubActions, "Test would fail when running on GitHub Actions.");
+        }
+
+        protected virtual bool SkipOnMono => false;
+
+        protected virtual bool SkipOnGitHubActions => false;
+
         protected DirectoryInfo TestsDirectory => _testsDirectory.Value;
 
         protected void RunningCommand(object? sender, CommandEventArgs args)
