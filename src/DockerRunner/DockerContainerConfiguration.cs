@@ -18,11 +18,11 @@ namespace DockerRunner
 
         /// <summary>
         /// The docker container name.
-        /// <para>Defaults to <c>DockerRunner_{fully qualified name of configuration}_{a random guid}</c></para>
+        /// <para>Defaults to <c>{fully qualified name of configuration class}_{a random guid}</c></para>
         /// <para>Use <see langword="null"/> or an empty string to let Docker assign a random two-words container name.</para>
         /// </summary>
         /// <remarks>The container name must match the following regular expression: <c>[a-zA-Z0-9][a-zA-Z0-9_.-]+</c></remarks>
-        public virtual string? ContainerName => $"DockerRunner_{GetType().FullName}_{Guid.NewGuid()}";
+        public virtual string? ContainerName => $"{GetType().FullName}_{Guid.NewGuid()}";
 
         /// <summary>
         /// Automatically remove the container when it exits.
