@@ -19,9 +19,9 @@ namespace DockerRunner.Database.PostgreSql
         public override string ConnectionString(string host, ushort port)
             => $"Host={host};Port={port};Database={Database};Username={User};Password={Password}";
 
-        private static readonly ProviderFactoryDescriptor[] PostgresDbProviderFactoryDescriptors =
+        private static readonly DbProviderFactoryDescriptor[] PostgresDbProviderFactoryDescriptors =
         {
-            new ProviderFactoryDescriptor("Npgsql.NpgsqlFactory", "Npgsql", "Npgsql"),
+            new DbProviderFactoryDescriptor("Npgsql.NpgsqlFactory", "Npgsql", "Npgsql"),
         };
 
         private readonly Lazy<DbProviderFactory> _providerFactory = new Lazy<DbProviderFactory>(() => DbProviderFactoryReflection.GetProviderFactory(PostgresDbProviderFactoryDescriptors));

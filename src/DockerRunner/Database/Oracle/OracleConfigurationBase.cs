@@ -23,10 +23,10 @@ namespace DockerRunner.Database.Oracle
         /// </summary>
         public abstract string ServiceName { get; }
 
-        private static readonly ProviderFactoryDescriptor[] OracleDbProviderFactoryDescriptors =
+        private static readonly DbProviderFactoryDescriptor[] OracleDbProviderFactoryDescriptors =
         {
-            new ProviderFactoryDescriptor("Oracle.ManagedDataAccess.Client.OracleClientFactory", "Oracle.ManagedDataAccess", "Oracle.ManagedDataAccess.Core"),
-            new ProviderFactoryDescriptor("Oracle.ManagedDataAccess.Client.OracleClientFactory", "Oracle.ManagedDataAccess", "Oracle.ManagedDataAccess"),
+            new DbProviderFactoryDescriptor("Oracle.ManagedDataAccess.Client.OracleClientFactory", "Oracle.ManagedDataAccess", "Oracle.ManagedDataAccess.Core"),
+            new DbProviderFactoryDescriptor("Oracle.ManagedDataAccess.Client.OracleClientFactory", "Oracle.ManagedDataAccess", "Oracle.ManagedDataAccess"),
         };
 
         private readonly Lazy<DbProviderFactory> _providerFactory = new Lazy<DbProviderFactory>(() => DbProviderFactoryReflection.GetProviderFactory(OracleDbProviderFactoryDescriptors));
@@ -39,7 +39,7 @@ namespace DockerRunner.Database.Oracle
         /// which implementation to use. Supported implementations are from <c>Oracle.ManagedDataAccess.Core</c> (.NET Core) and <c>Oracle.ManagedDataAccess</c> (.NET Framework)
         /// packages.
         /// </remarks>
-        /// <exception cref="MissingAssemblyException">Neither <c>Oracle.ManagedDataAccess.Core</c> nor <c>Oracle.ManagedDataAccess</c> is referenced.</exception>
+        /// <exception cref="MissingDbProviderAssemblyException">Neither <c>Oracle.ManagedDataAccess.Core</c> nor <c>Oracle.ManagedDataAccess</c> is referenced.</exception>
         public override DbProviderFactory ProviderFactory => _providerFactory.Value;
 
         /// <inheritdoc />

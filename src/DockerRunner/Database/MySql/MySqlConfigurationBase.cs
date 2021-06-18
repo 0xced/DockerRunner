@@ -19,11 +19,11 @@ namespace DockerRunner.Database.MySql
         public override string ConnectionString(string host, ushort port)
             => $"server={host};port={port};database={Database};user id={User};password={Password}";
 
-        private static readonly ProviderFactoryDescriptor[] MySqlDbProviderFactoryDescriptors =
+        private static readonly DbProviderFactoryDescriptor[] MySqlDbProviderFactoryDescriptors =
         {
-            new ProviderFactoryDescriptor("MySql.Data.MySqlClient.MySqlClientFactory", "MySql.Data", "MySql.Data"),
-            new ProviderFactoryDescriptor("MySqlConnector.MySqlConnectorFactory", "MySqlConnector", "MySqlConnector"), // MySqlConnector >= 1.0.0
-            new ProviderFactoryDescriptor("MySql.Data.MySqlClient.MySqlClientFactory", "MySqlConnector", "MySqlConnector"), // MySqlConnector < 1.0.0
+            new DbProviderFactoryDescriptor("MySql.Data.MySqlClient.MySqlClientFactory", "MySql.Data", "MySql.Data"),
+            new DbProviderFactoryDescriptor("MySqlConnector.MySqlConnectorFactory", "MySqlConnector", "MySqlConnector"), // MySqlConnector >= 1.0.0
+            new DbProviderFactoryDescriptor("MySql.Data.MySqlClient.MySqlClientFactory", "MySqlConnector", "MySqlConnector"), // MySqlConnector < 1.0.0
         };
 
         private readonly Lazy<DbProviderFactory> _providerFactory = new Lazy<DbProviderFactory>(() => DbProviderFactoryReflection.GetProviderFactory(MySqlDbProviderFactoryDescriptors));
@@ -35,7 +35,7 @@ namespace DockerRunner.Database.MySql
         /// Searches the <c>MySqlClientFactory</c> or <c>MySqlConnectorFactory</c> instance through reflection in order to let the consumer decides
         /// which implementation to use. Supported implementations are from <c>MySql.Data</c> and <c>MySqlConnector</c> packages.
         /// </remarks>
-        /// <exception cref="MissingAssemblyException">Neither <c>MySql.Data</c> nor <c>MySqlConnector</c> is referenced.</exception>
+        /// <exception cref="MissingDbProviderAssemblyException">Neither <c>MySql.Data</c> nor <c>MySqlConnector</c> is referenced.</exception>
         public override DbProviderFactory ProviderFactory => _providerFactory.Value;
 
         /// <inheritdoc />

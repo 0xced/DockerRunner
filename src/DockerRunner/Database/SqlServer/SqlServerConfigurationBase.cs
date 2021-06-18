@@ -18,12 +18,12 @@ namespace DockerRunner.Database.SqlServer
         /// <inheritdoc />
         public override string ConnectionString(string host, ushort port) => $"Data Source={host},{port};User ID={User};Password={Password}";
 
-        private static readonly ProviderFactoryDescriptor[] SqlServerDbProviderFactoryDescriptors =
+        private static readonly DbProviderFactoryDescriptor[] SqlServerDbProviderFactoryDescriptors =
         {
-            new ProviderFactoryDescriptor("Microsoft.Data.SqlClient.SqlClientFactory", "Microsoft.Data.SqlClient", "Microsoft.Data.SqlClient"),
-            new ProviderFactoryDescriptor("System.Data.SqlClient.SqlClientFactory", "System.Data.SqlClient", "System.Data.SqlClient"),
+            new DbProviderFactoryDescriptor("Microsoft.Data.SqlClient.SqlClientFactory", "Microsoft.Data.SqlClient", "Microsoft.Data.SqlClient"),
+            new DbProviderFactoryDescriptor("System.Data.SqlClient.SqlClientFactory", "System.Data.SqlClient", "System.Data.SqlClient"),
             // Available in the .NET Framework GAC, requires Version + Culture + PublicKeyToken to be explicitly specified
-            new ProviderFactoryDescriptor("System.Data.SqlClient.SqlClientFactory", "System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", null),
+            new DbProviderFactoryDescriptor("System.Data.SqlClient.SqlClientFactory", "System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", null),
         };
 
         private readonly Lazy<DbProviderFactory> _providerFactory = new Lazy<DbProviderFactory>(() => DbProviderFactoryReflection.GetProviderFactory(SqlServerDbProviderFactoryDescriptors));
@@ -36,7 +36,7 @@ namespace DockerRunner.Database.SqlServer
         /// which implementation to use. Supported implementations are from <c>Microsoft.Data.SqlClient</c> and <c>System.Data.SqlClient</c>
         /// packages or the built-in one from <c>System.Data</c> (.NET Framework only).
         /// </remarks>
-        /// <exception cref="MissingAssemblyException">Neither <c>Microsoft.Data.SqlClient</c> nor <c>System.Data.SqlClient</c> is referenced.</exception>
+        /// <exception cref="MissingDbProviderAssemblyException">Neither <c>Microsoft.Data.SqlClient</c> nor <c>System.Data.SqlClient</c> is referenced.</exception>
         public override DbProviderFactory ProviderFactory => _providerFactory.Value;
 
         /// <inheritdoc />
