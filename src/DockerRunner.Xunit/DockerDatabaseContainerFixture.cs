@@ -1,6 +1,7 @@
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
+using DockerRunner.Database;
 using Xunit;
 using Xunit.Abstractions;
 
