@@ -4,9 +4,9 @@
     ".NETFramework,Version=v4.7.2": {
       "DockerRunner": {
         "type": "Direct",
-        "requested": "[1.0.0-beta.1, )",
-        "resolved": "1.0.0-beta.1",
-        "contentHash": "eeFaXuYogGvbu9UDqW1w9YiA+P/Z+NB0j+eAvZYj4KLMn0K5DqNHAjoERGAFKAiDviyKAKL0wrEjuBHXsu18lw==",
+        "requested": "[1.0.0-beta.2, )",
+        "resolved": "1.0.0-beta.2",
+        "contentHash": "U79ldOG5nitqYl1kSCNJ9exblqXfvqv3bW3pqBZstM07btH07ulGbohZZEc5pWl9zljWora/a1J/me80aY1sqA==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "5.0.0"
         }
@@ -104,9 +104,9 @@
     ".NETStandard,Version=v2.0": {
       "DockerRunner": {
         "type": "Direct",
-        "requested": "[1.0.0-beta.1, )",
-        "resolved": "1.0.0-beta.1",
-        "contentHash": "eeFaXuYogGvbu9UDqW1w9YiA+P/Z+NB0j+eAvZYj4KLMn0K5DqNHAjoERGAFKAiDviyKAKL0wrEjuBHXsu18lw==",
+        "requested": "[1.0.0-beta.2, )",
+        "resolved": "1.0.0-beta.2",
+        "contentHash": "U79ldOG5nitqYl1kSCNJ9exblqXfvqv3bW3pqBZstM07btH07ulGbohZZEc5pWl9zljWora/a1J/me80aY1sqA==",
         "dependencies": {
           "Microsoft.Bcl.AsyncInterfaces": "5.0.0"
         }

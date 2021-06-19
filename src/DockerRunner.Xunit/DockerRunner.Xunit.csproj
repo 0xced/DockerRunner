@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DockerRunner" Version="1.0.0-beta.1" />
+    <PackageReference Include="DockerRunner" Version="1.0.0-beta.2" />
     <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
   </ItemGroup>
 
