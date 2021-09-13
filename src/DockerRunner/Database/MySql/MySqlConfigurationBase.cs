@@ -48,5 +48,8 @@ namespace DockerRunner.Database.MySql
             ["MYSQL_ROOT_PASSWORD"] = Password,
             ["MYSQL_ROOT_HOST"] = "%",
         };
+
+        /// <inheritdoc />
+        public override TimeSpan Timeout => TimeSpan.FromMinutes(1);
     }
 }
