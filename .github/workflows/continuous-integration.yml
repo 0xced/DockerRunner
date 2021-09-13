@@ -44,6 +44,7 @@ jobs:
       # - dotnet test on a multi-target projects logs only the last target @ https://github.com/microsoft/vstest/issues/1603
       # - Add Support for Templating in LogFileName @ https://github.com/Microsoft/vstest/issues/1876
       # - Fix - dotnet test on a multi-target projects logs only the last target @ https://github.com/microsoft/vstest/pull/1877
+      # - Several problems are being caused by the new log file name timestamp @ https://github.com/microsoft/vstest/issues/1978
       # - [Revert] Fix for dotnet test on a multi-target projects logs only the last target @ https://github.com/microsoft/vstest/pull/1996
       # The "easiest" workaround for now is to explicitly run for each supported framework
       - name: Run tests (.NET Framework 4.7.2)
