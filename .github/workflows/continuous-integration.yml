@@ -48,9 +48,9 @@ jobs:
       # - [Revert] Fix for dotnet test on a multi-target projects logs only the last target @ https://github.com/microsoft/vstest/pull/1996
       # The "easiest" workaround for now is to explicitly run for each supported framework
       - name: Run tests (.NET Framework 4.7.2)
-        run: dotnet test --no-build --framework net472 --logger:"html;LogFileName=../TestResults-${{ runner.os }}-net472.html"
+        run: dotnet test --no-build --framework net472 --logger:"html;LogFileName=../TestResults-${{ runner.os }}-net472.html" --logger GitHubActions
       - name: Run tests (.NET 5.0)
-        run: dotnet test --no-build --framework net5.0 --logger:"html;LogFileName=../TestResults-${{ runner.os }}-net5.0.html"
+        run: dotnet test --no-build --framework net5.0 --logger:"html;LogFileName=../TestResults-${{ runner.os }}-net5.0.html" --logger GitHubActions
       - name: Upload test results
         uses: actions/upload-artifact@v2
         if: always()

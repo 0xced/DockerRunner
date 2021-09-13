@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Remove="GitHubActionsTestLogger" />
     <PackageReference Remove="Microsoft.NET.Test.Sdk" />
     <PackageReference Remove="Microsoft.TestPlatform.ObjectModel" />
     <PackageReference Remove="xunit" />
