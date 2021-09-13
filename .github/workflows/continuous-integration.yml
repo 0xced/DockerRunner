@@ -35,16 +35,30 @@ jobs:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
       - name: Restore NuGet packages
-        run: dotnet restore --verbosity normal
+        run: dotnet restore
       - name: Build solution
-        run: dotnet build --verbosity normal
+        run: dotnet build
       - name: Setup Docker
         uses: docker-practice/actions-setup-docker@v1
-      - name: Run tests
-        run: dotnet test --no-build --verbosity normal
+      # Running tests on multiple frameworks is not properly supported with `dotnet test`:
+      # - dotnet test on a multi-target projects logs only the last target @ https://github.com/microsoft/vstest/issues/1603
+      # - Add Support for Templating in LogFileName @ https://github.com/Microsoft/vstest/issues/1876
+      # - Fix - dotnet test on a multi-target projects logs only the last target @ https://github.com/microsoft/vstest/pull/1877
+      # - [Revert] Fix for dotnet test on a multi-target projects logs only the last target @ https://github.com/microsoft/vstest/pull/1996
+      # The "easiest" workaround for now is to explicitly run for each supported framework
+      - name: Run tests (.NET Framework 4.7.2)
+        run: dotnet test --no-build --framework net472 --logger:"html;LogFileName=../TestResults-${{ runner.os }}-net472.html"
+      - name: Run tests (.NET 5.0)
+        run: dotnet test --no-build --framework net5.0 --logger:"html;LogFileName=../TestResults-${{ runner.os }}-net5.0.html"
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: TestResults-${{ runner.os }}
+          path: "**/TestResults-*.html"
       - name: Create NuGet package
         if: startsWith(github.ref, 'refs/tags/')
-        run: dotnet pack src/${{ steps.git-tag-name.outputs.projectName }}/${{ steps.git-tag-name.outputs.projectName }}.csproj --output . --no-build --verbosity normal
+        run: dotnet pack --no-build src/${{ steps.git-tag-name.outputs.projectName }}/${{ steps.git-tag-name.outputs.projectName }}.csproj --output .
         id: dotnet-pack
       - name: Upload NuGet package artifact
         if: startsWith(github.ref, 'refs/tags/')
