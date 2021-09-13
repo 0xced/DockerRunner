@@ -4,4 +4,11 @@
     <TargetFrameworks>net472;net5.0</TargetFrameworks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Remove="Microsoft.NET.Test.Sdk" />
+    <PackageReference Remove="Microsoft.TestPlatform.ObjectModel" />
+    <PackageReference Remove="xunit" />
+    <PackageReference Remove="xunit.runner.visualstudio" />
+  </ItemGroup>
+
 </Project>
